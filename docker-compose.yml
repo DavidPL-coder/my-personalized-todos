@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  mpt-frontend-container:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+      # - "443:443"
+    volumes:
+      - ./https/:/usr/src/app/https/
+    depends_on:
+      - mpt-backend-container
+
+  mpt-backend-container:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+      # - "4443:4443"
+    volumes:
+      - ./aspnetapp.pfx:/https/aspnetapp.pfx
+      - /c/temp-keys:/root/.aspnet/DataProtection-Keys
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=passwd1234
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    depends_on:
+      - mpt-database
+
+  mpt-database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - MSSQL_SA_PASSWORD=Password!_123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./db_data/data:/var/opt/mssql/data
+      - ./db_data/log:/var/opt/mssql/log
+      - ./db_data/secrets:/var/opt/mssql/secrets

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="assets/css/shared-styles.css">
+    <link rel="stylesheet" href="assets/css/todos-styles.css">
+    <title>Twoja ToDo Lista</title>
+</head>
+<body>
+    <div id="todo-modal-overlay" class="default-modal-overlay">
+        <div id="todo-modal" class="default-modal">
+            <div id="todo-modal-header" class="default-modal-header">
+                <h2 id="todo-modal-title"></h2>
+                <span id="todo-modal-close-button" class="default-modal-close-button">&times;</span>
+            </div>
+            <div id="todo-modal-body" class="default-modal-body">
+                <form id="todo-form" method="post">
+                    <p class="form-group">
+                        <label for="title-input" class="label-input">Tytuł</label>
+                        <input id="title-input" class="form-group-input" type="text" name="title" placeholder="np: nauka, siłka, spanie" required>
+                        <span id="title-validation-control" class="validation-control">Tytuł musi być niepusty i unikalny (tylko jedno ToDo może mieć określoną nazwę).</span>
+                    </p>
+                    <p class="form-group">
+                        <label for="description-input" class="label-input">Opis</label>
+                        <textarea id="description-input" class="form-group-input" name="description"></textarea>
+                    </p>
+                    <p class="form-group">
+                        <label for="task-start-input" class="label-input">Rozpoczęcie zadania</label>
+                        <input id="task-start-input" class="form-group-input" type="datetime-local" name="taskStart">
+                    </p>
+                    <p class="form-group">
+                        <label for="task-end-input" class="label-input">Zakończenie zadania</label>
+                        <input id="task-end-input" class="form-group-input" type="datetime-local" name="taskEnd">
+                    </p>
+                    <input id="modal-confirm-submit-button" class="default-styled-button" type="submit" value="Zatwierdź">
+                    <input id="modal-remove-submit-btn" class="default-styled-button" type="submit" value="Usuń">
+                </form>
+            </div>
+        </div>
+    </div>
+    <header>
+        <span id="site-title"></span>
+    </header>
+    <main>
+        <article id="action-panel">
+            <button id="panel-add-button" class="action-panel-button user-action-button">Dodaj ToDo</button>
+            <button id="panel-remove-button" class="action-panel-button user-action-button">Usuń ToDo</button>
+            <button id="user-settings-button">
+                <img src="assets/img/gear-solid.svg" alt="button that show user's settings after click only on small screen">
+            </button>
+        </article>
+        <article id="todos-and-settings">
+            <section id="todo-container">
+                <span id="todos-state-info">Wczytywanie zadań...</span>
+            </section>
+            <aside id="settings">
+                Twoje ustawienia
+                <form id="settings-form" action="http://localhost/edit-settings" method="post">
+                    <p><input type="checkbox" id="italic-checkbox" name="italic" class="settings-checkbox"> Kursywa</p>
+                    <p><input type="checkbox" id="bold-checkbox" name="bold" class="settings-checkbox"> Pogrubienie</p>
+                    <p><input type="checkbox" id="uppercase-checkbox" name="uppercase" class="settings-checkbox"> Wielkie litery</p>
+                    <p><input type="text" id="text-color-input" name="textColor" class="color-provider" size="9" placeholder="np:#a1b1c1"> Kolor tekstu</p>
+                    <p><input type="text" id="background-color-input" name="backgroundColor" class="color-provider" size="9" placeholder="np:#eee"> Kolor tła todo</p>
+                    <p><input type="text" id="header-color-input" name="headerColor" class="color-provider" size="9" placeholder="np:bbb"> Kolor nagłówka</p>
+                    <p>
+                        <select id="font-size-input" name="fontSize">
+                            <option value="0" id="small-font-option" class="font-size-selector-option">mała</option>
+                            <option value="1" id="medium-font-option" class="font-size-selector-option">średnia</option>
+                            <option value="2" id="big-font-option" class="font-size-selector-option">duża</option>
+                        </select>
+                        Wielkość czcionki
+                    </p>
+                    <input type="submit" value="Zapisz" id="save-settings-button" class="user-action-button">
+                </form>
+            </aside>
+        </article>
+    </main>
+    <footer>
+        Dawid Dykmański
+    </footer>
+    <script src="assets/js/UserCockpitInitializator.js"></script>
+</body>
+</html>

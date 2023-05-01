@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="assets/css/shared-styles.css">
+    <link rel="stylesheet" href="assets/css/login-styles.css">
+    <title>Logowanie</title>
+</head>
+<body>
+    <div id="error-modal-overlay" class="default-modal-overlay">
+        <div class="default-modal">
+            <div class="default-modal-header">
+                <h2>Błąd podczas logowania</h2>
+                <span id="error-modal-close-button" class="default-modal-close-button">&times;</span>
+            </div>
+            <div class="default-modal-body">
+                Podano błędny login lub hasło.
+            </div>
+        </div>
+    </div>
+    <div id="container">
+        <header>
+            <h1>Logowanie</h1>
+        </header>
+        <main id="login-window" class="content-box">
+            <form action="http://localhost/login" method="post">
+                <p class="form-group">
+                    <label for="login-input" class="label-input">Login</label>
+                    <input id="login-input" class="form-group-input" type="text" name="login" minlength="4" placeholder="nazwa użytkownika" required>
+                </p>
+                <p class="form-group">
+                    <label for="password-input" class="label-input">Hasło</label>
+                    <input id="password-input" class="form-group-input" type="password" name="password" minlength="6" required>
+                </p>
+                <input id="submit-button" class="default-styled-button" type="submit" value="Zaloguj się">
+            </form>
+        </main>
+        <footer>
+            Dawid Dykmański
+        </footer>
+    </div>
+    <script>
+        const displayMode = "<%= errorModalDisplayMode %>";
+        const errorModalOverlay = document.querySelector("#error-modal-overlay");
+        errorModalOverlay.style.display = displayMode;
+
+        const closeButton = document.querySelector("#error-modal-close-button");
+        closeButton.addEventListener("click", () => errorModalOverlay.style.display = "none");
+    </script>
+</body>
+</html>

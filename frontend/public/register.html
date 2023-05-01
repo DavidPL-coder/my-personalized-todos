@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="assets/css/shared-styles.css">
+    <link rel="stylesheet" href="assets/css/register-styles.css">
+    <title>Rejestrowanie</title>
+</head>
+<body>
+    <!-- TODO: Improve looking of the site. -->
+    <div id="error-modal-overlay" class="default-modal-overlay">
+        <div class="default-modal">
+            <div class="default-modal-header">
+                <h2>Błąd podczas rejestracji</h2>
+                <span id="error-modal-close-button" class="default-modal-close-button">&times;</span>
+            </div>
+            <div class="default-modal-body">
+                Użytkownik z tym loginem już istnieje (użyj innego do rejestracji).
+            </div>
+        </div>
+    </div>
+    <div id="container">
+        <header>
+            <h1>Rejestrowanie</h1>
+        </header>
+        <main id="register-window" class="content-box">
+            <form id="register-form" action="http://localhost/register" method="post">
+                <p class="form-group">
+                    <label for="login-input">Login</label>
+                    <input id="login-input" type="text" name="login" minlength="4" placeholder="nazwa użytkownika" required>
+                    <span id="login-validation-control" class="validation-control">Nazwa nie może krótsza niż 4 znaki oraz nie może zawierać białych znaków.</span>
+                </p>
+                <p class="form-group">
+                    <label for="password-input">Hasło</label>
+                    <input id="password-input" type="password" name="password" minlength="6" required>
+                    <span id="password-validation-control" class="validation-control">Hasło musi być nie krótsze niż 6 znaków oraz nie może zawierać białych znaków.</span>
+                </p>
+                <p class="form-group">
+                    <label for="confirm-password-input">Potwierdź hasło</label>
+                    <input id="confirm-password-input" type="password" name="confirmpassword" minlength="6" required>
+                    <span id="confirm-password-validation-control" class="validation-control">Podane hasło jest inne niż wcześniej podane.</span>
+                </p>
+                <p class="form-group">
+                    <label for="age-input">Wiek</label>
+                    <input id="age-input" type="number" name="age" min="5" max="200" required>
+                    <span id="age-validation-control" class="validation-control">Wiek musi być liczbą z przedziału 5 - 200.</span>
+                </p>
+                <p class="form-group">
+                    <label for="date-input">Data urodzenia</label>
+                    <input id="date-input" type="date" name="dateofbirth" required>
+                    <span id="date-validation-control" class="validation-control">Wprowadź swoją datę urodzenia!</span>
+                </p>
+                <p class="form-group">
+                    <label>Płeć:</label>
+                    <label><input type="radio" name="gender" value="female"> Kobieta</label>
+                    <label><input type="radio" name="gender" value="male" checked> Facet</label>
+                </p>
+                <p id="purposes-checkboxes" class="form-group">
+                    <label>W jakim celu będziesz używał tej aplikacji?</label>
+                    <p><input id="planing-checkbox" type="checkbox" name="purposes" value="planing">planowanie czynności</p>
+                    <p><input id="fun-checkbox" type="checkbox" name="purposes" value="fun">dla zabawy/testu</p>
+                    <p><input id="other-checkbox" type="checkbox" name="purposes" value="other">inne</p>
+                    <span id="purpose-of-use-validation-control" class="validation-control">Zaznacz conajmniej jedną opcję z powyższych!</span>
+                </p>
+                <p class="form-group">
+                    <select name="nationality" size="8" multiple>
+                        <optgroup label="Europa">
+                            <option value="poland" selected>Polska</option>
+                            <option value="germany">Niemcy</option>
+                        </optgroup>
+                        <optgroup label="Azja">
+                            <option value="china">Chiny</option>
+                            <option value="japan">Japonia</option>
+                        </optgroup>
+                        <optgroup label="Pozostałe">
+                            <option value="other">Inny</option>
+                        </optgroup>
+                    </select>
+                    <textarea id="bio-input" name="description" cols="30" rows="9" placeholder="wpisz coś o sobie"></textarea>
+                </p>
+                <input id="submit-button" class="default-styled-button" type="submit" value="Zatwierdź">
+            </form>
+        </main>
+        <footer>
+            Dawid Dykmański
+        </footer>
+    </div>
+    <script src="assets/js/RegisterFormValidator.js"></script>
+</body>
+</html>

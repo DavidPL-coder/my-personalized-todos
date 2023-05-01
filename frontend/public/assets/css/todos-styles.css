@@ -1,0 +1,287 @@
+#todo-modal {
+    width: 550px;
+}
+
+#todo-modal-header {
+    font-size: 18px;
+    padding-left: 15px;
+}
+
+#todo-modal-title {
+    margin: 15px 0px;
+}
+
+#todo-modal-body {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.label-input {
+    font-weight: bold;
+    font-size: 21px;
+}
+
+.form-group {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.form-group-input {
+    width: 100%;
+    height: 32px;
+    margin-top: 6px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease-out;
+}
+
+.form-group-input:focus {
+    box-shadow: 0px 0px 4px 1px rgb(176, 171, 171);
+}
+
+#description-input {
+    font-family: sans-serif;
+    height: 64px;
+    resize: none;
+    overflow: hidden;
+}
+
+#modal-confirm-submit-button {
+    height: 36px;
+    width: 100%;
+    font-size: 21px;
+}
+
+#modal-remove-submit-btn {
+    display: none;
+    background-color: red;
+    border: 2px solid red;
+    height: 36px;
+    width: 100%;
+    font-size: 21px;
+    margin-top: 10px;
+}
+
+#modal-remove-submit-btn:hover {
+    color: red;
+    background-color: white;
+}
+
+header {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #191d21;
+    padding: 20px;
+    font-size: 48px;
+    text-align: center;
+    text-shadow: 1px 1px 3px black;
+}
+
+#action-panel {
+    background-color: #222930;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-panel-button {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 5px;
+}
+
+#panel-add-button {
+    background-color: #3199e3;
+    border: 2px solid #3199e3;
+}
+
+#panel-remove-button {
+    background-color: red;
+    border: 2px solid red;
+}
+
+#user-settings-button {
+    display: none;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0px 0px 2px 0px black;
+    border-radius: 0;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    background-color: gray;
+}
+
+#user-settings-button:hover {
+    box-shadow: 0px 0px 7px 0px black;
+    transform: scale(1.02);
+}
+
+.user-action-button {
+    color: white;
+    width: 150px;
+    box-sizing: border-box;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-shadow: 1px 1px 5px black;
+    box-shadow: 0px 0px 2px 0px black;
+}
+
+.user-action-button:hover {
+    box-shadow: 0px 0px 7px 0px black;
+    letter-spacing: 3px;
+    transform: scale(1.02);
+}
+
+#todos-and-settings {
+    display: flex;
+    gap: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#todo-container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80vw;
+    min-height: 600px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 25px 5px;
+    background-color: #5a5a5a;
+    box-shadow: 0px 0px 1px 1px black;
+}
+
+.todo-card {
+    width: 275px;
+    height: 300px;
+    background-color: #222930;
+    color: white;
+    display: inline-block;
+    box-shadow: 0px 0px 5px 0px black;
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+}
+
+.todo-card:hover {
+    box-shadow: 0px 0px 5px 3px black;
+    transform: rotate(1deg) scale(1.01);
+}
+
+.todo-header {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    background-color: #3199e3;
+    color: white;
+    font-weight: bold;
+}
+
+.todo-title {
+    text-shadow: 0px 0px 3px black;
+    font-size: 18px;
+    align-self: center;
+}
+
+.todo-remove-btn {
+    display: none;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    background-color: red;
+    width: 40px;
+    height: 35px;
+    font-size: 24px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.todo-description {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#settings {
+    display: inline-block;
+    padding: 5px;
+    background-color: #222930;
+    box-shadow: 0px 0px 1px 1px black;
+    white-space: nowrap;
+}
+
+.color-provider {
+    height: 25px;
+    outline: none;
+}
+
+.color-provider:focus {
+    box-shadow: 0px 0px 3px 1px black;
+}
+
+#save-settings-button {
+    width: 150px;
+    height: 40px;
+    margin-left: 5px;
+    background-color: #3199e3;
+    border: 2px solid #3199e3;
+}
+
+/* TODO: convert into id */
+select {
+    height: 30px;
+    width: 70px;
+}
+
+footer {
+    position: static;
+}
+
+@media screen and (max-width: 815px) {
+    #user-settings-button {
+        display: inline-block;
+    }
+
+    #todos-and-settings {
+        flex-direction: column-reverse;
+    }
+
+    #settings {
+        display: none;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80vw;
+        box-sizing: border-box;
+
+        animation-name: showSettingsOnSmallScreen;
+        animation-duration: 1s;
+    }
+
+    #todo-modal {
+        width: 90%;
+    }
+}
+
+@keyframes showSettingsOnSmallScreen {
+    0% { 
+        opacity: 0 
+    }
+
+    100% { 
+        opacity: 1 
+    }
+}

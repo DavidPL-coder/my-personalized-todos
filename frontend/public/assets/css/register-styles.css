@@ -1,0 +1,48 @@
+header {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #191d21;
+    padding-left: 30px;
+}
+
+#container {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+#register-window {
+    width: 800px;
+    height: auto;
+}
+
+.form-group {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#bio-input {
+    resize: none;
+}
+
+#submit-button {
+    margin-bottom: 10px;
+}
+
+footer {
+    position: static;
+}
+
+@media screen and (max-width: 810px) {
+    #register-window,
+    .default-modal,
+    form {
+        width: 90%;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+}

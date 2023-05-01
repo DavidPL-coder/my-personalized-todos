@@ -1,0 +1,49 @@
+#container {
+    position: relative;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    font-size: 54px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    margin-top: 0;
+    text-shadow: 1px 1px 1px black;
+}
+
+#account-menu {
+    gap: 25px;
+    height: 250px;
+}
+
+.account-button {
+    width: 450px;
+    height: 75px;
+    font-size: 22px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+@media screen and (min-width: 501px) and (max-width: 665px) {
+    h1 {
+        font-size: 36px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    h1 {
+        font-size: 32px;
+    }
+}
+
+
+@media screen and (max-width: 575px) {
+    #account-menu,
+    .account-button {
+        width: 90%;
+    }
+}
