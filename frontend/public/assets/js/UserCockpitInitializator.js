@@ -20,11 +20,13 @@ class UserCockpitInitializator {
     #settingsColorInputsWithDefaults;
 
     constructor() {
+        const SERVER_URL = "http://localhost:8080";
+
         this.#cancelTextContent = "Anuluj";
         this.#authUserNameUrl = "http://localhost/authorized-user-name";
         this.#siteTitle = username => "Lista user'a " + username;
         this.#noTodosInfo = "Brak zadań.";
-        this.#getTodosUrl = username => `http://localhost:8080/api/users/${username}/todos`;
+        this.#getTodosUrl = username => `${SERVER_URL}/api/users/${username}/todos`;
         this.#modalTitleInUpdateMode = "Edycja Twojego ToDo";
         this.#modalTitleInAddMode = "Dodawanie Nowego ToDo";
         this.#deleteTodoUrl = todoTitle => `http://localhost/delete-todo/${todoTitle}`;
@@ -34,7 +36,7 @@ class UserCockpitInitializator {
         this.#transformOfTodoToDelete = "scale(1.03)";
         this.#todoForm = document.querySelector("#todo-form");
         this.#panelRemoveBtn = document.querySelector("#panel-remove-button");
-        this.#getSettingsUrl = username => `http://localhost:8080/api/users/${username}/settings`;
+        this.#getSettingsUrl = username => `${SERVER_URL}/api/users/${username}/settings`;
         this.#settingsColorInputsWithDefaults = [
             { input: document.querySelector("#text-color-input"), defaultValue: "#ffffff" },
             { input: document.querySelector("#background-color-input"), defaultValue: "#222930"},

@@ -3,6 +3,9 @@ import axios from "axios";
 // TODO: Use diffrent color for error message?
 
 export default class RequestSender {
+
+    static SERVER_URL = "http://mpt-backend-container:8080";
+
     static async get(url, req) {
         return await this.#sendRequest(async config => await axios.get(url, config), req.headers.cookie);
     }
@@ -20,7 +23,7 @@ export default class RequestSender {
     }
 
     static async getAuthorizedUserName(req) {
-        const response = await RequestSender.get("http://mpt-backend-container:8080/api/account/username", req);
+        const response = await RequestSender.get(`${this.SERVER_URL}/api/account/username`, req);
         return response.data.name;
     }
 

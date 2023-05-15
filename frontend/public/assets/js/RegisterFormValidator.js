@@ -9,6 +9,7 @@ class RegisterFormValidator {
     #planingCheckbox;
     #funCheckbox;
     #otherCheckbox;
+    #serverURL;
 
     constructor() {
         // TODO: Take constants from config file.
@@ -20,6 +21,7 @@ class RegisterFormValidator {
         this.#planingCheckbox = document.querySelector("#planing-checkbox");
         this.#funCheckbox = document.querySelector("#fun-checkbox");
         this.#otherCheckbox = document.querySelector("#other-checkbox");
+        this.#serverURL = "http://localhost:8080";
     }
 
     initValidator() {
@@ -112,7 +114,7 @@ class RegisterFormValidator {
     async #isUserWithGivenLoginExist() {
         try {
             const loginInputValue = document.querySelector("#login-input").value;
-            const response = await fetch(`http://localhost:8080/api/users/${loginInputValue}`);
+            const response = await fetch(`${this.#serverURL}/api/users/${loginInputValue}`);
             return response.status;
         } 
         catch (error) {

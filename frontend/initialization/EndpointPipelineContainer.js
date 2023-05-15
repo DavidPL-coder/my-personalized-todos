@@ -1,11 +1,14 @@
 import RequestSender from "./RequestSender.js"
 
 export default class EndpointPipelineContainer {
+
+    static SERVER_URL = "http://mpt-backend-container:8080";
+
     static async register(req, res) {
         if (typeof (req.body.purposes) === "string")
             req.body.purposes = [ req.body.purposes ];
 
-        const response = await RequestSender.post("http://mpt-backend-container:8080/api/users", req.body, req); 
+        const response = await RequestSender.post(`${this.SERVER_URL}/api/users`, req.body, req); 
         if (response?.status !== 200)
             return res.redirect("/error");
 
@@ -16,7 +19,7 @@ export default class EndpointPipelineContainer {
         req.body.login = req.body.login.trim();
         req.body.password = req.body.password.trim();
 
-        const response = await RequestSender.post("http://mpt-backend-container:8080/api/tokens", req.body, req); 
+        const response = await RequestSender.post(`${this.SERVER_URL}/api/tokens`, req.body, req); 
         const statusCode = response?.status;
         
         if (statusCode == 200) {
@@ -32,7 +35,7 @@ export default class EndpointPipelineContainer {
     static async addToDo(req, res) {
         const dataToSend = this.#parseTodoData(req.body);
         const username = await RequestSender.getAuthorizedUserName(req);
-        const response = await RequestSender.post(`http://mpt-backend-container:8080/api/users/${username}/todos`, dataToSend, req);
+        const response = await RequestSender.post(`${this.SERVER_URL}/api/users/${username}/todos`, dataToSend, req);
         if (response?.status !== 200)
             return res.redirect("/error");
 
@@ -41,7 +44,7 @@ export default class EndpointPipelineContainer {
 
     static async deleteToDo(req, res) {
         const username = await RequestSender.getAuthorizedUserName(req);
-        const response = await RequestSender.delete(`http://mpt-backend-container:8080/api/users/${username}/todos/${req.params.todoTitle}`, req);
+        const response = await RequestSender.delete(`${this.SERVER_URL}/api/users/${username}/todos/${req.params.todoTitle}`, req);
         if (response?.status !== 200)
             return res.redirect("/error");
 
@@ -51,7 +54,7 @@ export default class EndpointPipelineContainer {
     static async editToDo(req, res) {
         const dataToSend = this.#parseTodoData(req.body);
         const username = await RequestSender.getAuthorizedUserName(req);
-        const response = await RequestSender.put(`http://mpt-backend-container:8080/api/users/${username}/todos/${req.params.todoTitle}`, dataToSend, req);
+        const response = await RequestSender.put(`${this.SERVER_URL}/api/users/${username}/todos/${req.params.todoTitle}`, dataToSend, req);
         if (response?.status !== 200)
             return res.redirect("/error");
 
@@ -70,7 +73,7 @@ export default class EndpointPipelineContainer {
         req.body.fontSize = parseInt(req.body.fontSize);
 
         const username = await RequestSender.getAuthorizedUserName(req);
-        const response = await RequestSender.put(`http://mpt-backend-container:8080/api/users/${username}/settings`, req.body, req);
+        const response = await RequestSender.put(`${this.SERVER_URL}/api/users/${username}/settings`, req.body, req);
         if (response?.status !== 200)
             return res.redirect("/error");
 
