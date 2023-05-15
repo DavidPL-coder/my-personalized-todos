@@ -48,9 +48,9 @@ app.post("/edit-settings", async (req, res) => await EndpointPipelineContainer.e
 // https.createServer(httpsSecurityOptions, app)
 //     .listen(443, () => console.log("My personalized todos app (frontend) listen to 443 port (https)."));
 
-app.enable('trust proxy');
-app.set('trust proxy', 1);
+///app.enable('trust proxy');
+///app.set('trust proxy', 1);
 
-// for heroku production app use http insted of https
-const PORT = process.env.PORT || 80;
+///const PORT = process.env.PORT || 80;
+const PORT = 80;
 app.listen(PORT, () => console.log(`My personalized todos app (frontend) listen to ${PORT} port.`));

@@ -7,8 +7,8 @@ services:
     ports:
       - "80:80"
       # - "443:443"
-    volumes:
-      - ./https/:/usr/src/app/https/
+    # volumes:
+      # - ./https/:/usr/src/app/https/
     depends_on:
       - mpt-backend-container
 
@@ -18,12 +18,12 @@ services:
     ports:
       - "8080:8080"
       # - "4443:4443"
-    volumes:
-      - ./aspnetapp.pfx:/https/aspnetapp.pfx
-      - /c/temp-keys:/root/.aspnet/DataProtection-Keys
-    environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=passwd1234
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    # volumes:
+      # - ./aspnetapp.pfx:/https/aspnetapp.pfx
+      # - /c/temp-keys:/root/.aspnet/DataProtection-Keys
+    # environment:
+      # - ASPNETCORE_Kestrel__Certificates__Default__Password=passwd1234
+      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     depends_on:
       - mpt-database
 
