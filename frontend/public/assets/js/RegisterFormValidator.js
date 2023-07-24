@@ -54,7 +54,7 @@ class RegisterFormValidator {
     #setValidationCheckBeforeSubmit() {
         const submitButton = document.querySelector("#submit-button");
         submitButton.addEventListener("click", async event => {
-            //event.preventDefault();
+            event.preventDefault();
 
             if (!this.#checkAllValidationRules())
                 return;
