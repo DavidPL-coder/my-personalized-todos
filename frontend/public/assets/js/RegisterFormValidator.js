@@ -54,7 +54,7 @@ class RegisterFormValidator {
     #setValidationCheckBeforeSubmit() {
         const submitButton = document.querySelector("#submit-button");
         submitButton.addEventListener("click", async event => {
-            event.preventDefault();
+            //event.preventDefault();
 
             if (!this.#checkAllValidationRules())
                 return;
@@ -114,6 +114,7 @@ class RegisterFormValidator {
     async #isUserWithGivenLoginExist() {
         try {
             const loginInputValue = document.querySelector("#login-input").value;
+            console.log("test 1######");
             const response = await fetch(`${this.#serverURL}/api/users/${loginInputValue}`);
             return response.status;
         } 
