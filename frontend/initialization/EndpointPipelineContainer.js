@@ -2,7 +2,7 @@ import RequestSender from "./RequestSender.js"
 
 export default class EndpointPipelineContainer {
 
-    static SERVER_URL = "http://mpt-backend-container:8080";
+    static SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
 
     static async register(req, res) {
         if (typeof (req.body.purposes) === "string")
