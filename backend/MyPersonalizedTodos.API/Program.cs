@@ -34,7 +34,7 @@ builder.Services.AddSingleton(appConfig);
 builder.Services.AddCors(options =>
 {
     // TODO: Add the address of app on production 
-    options.AddPolicy(appConfig.CorsPolicyName, policyBuilder => policyBuilder.WithOrigins("http://localhost", "http://mpt-frontend-container", "http://192.168.0.168")
+    options.AddPolicy(appConfig.CorsPolicyName, policyBuilder => policyBuilder.WithOrigins("http://localhost", "http://mpt-frontend-container", "http://192.168.0.168", "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com")
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 });
 
