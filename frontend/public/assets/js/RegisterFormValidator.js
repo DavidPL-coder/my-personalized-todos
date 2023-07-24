@@ -21,7 +21,7 @@ class RegisterFormValidator {
         this.#planingCheckbox = document.querySelector("#planing-checkbox");
         this.#funCheckbox = document.querySelector("#fun-checkbox");
         this.#otherCheckbox = document.querySelector("#other-checkbox");
-        this.#serverURL = "http://localhost:8080";
+        this.#serverURL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
     }
 
     initValidator() {
@@ -68,7 +68,7 @@ class RegisterFormValidator {
                 errorModalOverlay.style.display = "flex";
             }
             else
-                window.location.replace("http://localhost/error"); // TODO: Get link from config or "global" variable
+                window.location.replace("http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/error"); // TODO: Get link from config or "global" variable
         });
     }
 

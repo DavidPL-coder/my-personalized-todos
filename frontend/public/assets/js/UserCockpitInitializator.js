@@ -20,18 +20,18 @@ class UserCockpitInitializator {
     #settingsColorInputsWithDefaults;
 
     constructor() {
-        const SERVER_URL = "http://localhost:8080";
+        const SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
 
         this.#cancelTextContent = "Anuluj";
-        this.#authUserNameUrl = "http://localhost/authorized-user-name";
+        this.#authUserNameUrl = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/authorized-user-name";
         this.#siteTitle = username => "Lista user'a " + username;
         this.#noTodosInfo = "Brak zadań.";
         this.#getTodosUrl = username => `${SERVER_URL}/api/users/${username}/todos`;
         this.#modalTitleInUpdateMode = "Edycja Twojego ToDo";
         this.#modalTitleInAddMode = "Dodawanie Nowego ToDo";
-        this.#deleteTodoUrl = todoTitle => `http://localhost/delete-todo/${todoTitle}`;
-        this.#updateTodoUrl = todoTitle => `http://localhost/edit-todo/${todoTitle}`;
-        this.#addTodoUrl = "http://localhost/add-todo";
+        this.#deleteTodoUrl = todoTitle => `http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/delete-todo/${todoTitle}`;
+        this.#updateTodoUrl = todoTitle => `http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/edit-todo/${todoTitle}`;
+        this.#addTodoUrl = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/add-todo";
         this.#boxShadowOfTodoToDelete = "0px 0px 7px 1px darkred";
         this.#transformOfTodoToDelete = "scale(1.03)";
         this.#todoForm = document.querySelector("#todo-form");
