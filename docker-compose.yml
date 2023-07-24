@@ -29,6 +29,7 @@ services:
 
   mpt-database:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
     environment:
       - MSSQL_SA_PASSWORD=Password!_123
       - ACCEPT_EULA=Y
