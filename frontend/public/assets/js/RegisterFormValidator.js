@@ -114,7 +114,6 @@ class RegisterFormValidator {
     async #isUserWithGivenLoginExist() {
         try {
             const loginInputValue = document.querySelector("#login-input").value;
-            console.log("test 1######");
             const response = await fetch(`${this.#serverURL}/api/users/${loginInputValue}`);
             return response.status;
         } 

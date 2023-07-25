@@ -7,7 +7,6 @@ export default class RequestSender {
     static SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
 
     static async get(url, req) {
-        console.log({url}, req.headers.cookie);
         return await this.#sendRequest(async config => await axios.get(url, config), req.headers.cookie);
     }
 

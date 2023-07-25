@@ -24,7 +24,6 @@ export default class EndpointPipelineContainer {
         
         if (statusCode == 200) {
             res.setHeader("set-cookie", response.headers["set-cookie"]);
-            console.log("head: ", res.getHeaders()['set-cookie']);
             return res.redirect("/todos");
         }
         else if (statusCode == 400)
@@ -63,9 +62,7 @@ export default class EndpointPipelineContainer {
     }
 
     static async authorizedUserName(req, res) {
-        console.log("auth: ", req.headers.cookie, res.getHeaders()['set-cookie'], res.getHeaders()['cookie']);
         const username = await RequestSender.getAuthorizedUserName(req);
-        console.log({username}, "node 1");
         return res.send(username);
     }
 
