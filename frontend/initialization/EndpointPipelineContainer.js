@@ -63,7 +63,7 @@ export default class EndpointPipelineContainer {
     }
 
     static async authorizedUserName(req, res) {
-        console.log("auth: ", req.headers.cookie, res.getHeaders()['set-cookie'], req.getHeaders()['set-cookie'], res.getHeaders()['cookie'], req.getHeaders()['cookie']);
+        console.log("auth: ", req.headers.cookie, res.getHeaders()['set-cookie'], res.getHeaders()['cookie']);
         const username = await RequestSender.getAuthorizedUserName(req);
         console.log({username}, "node 1");
         return res.send(username);
