@@ -62,11 +62,14 @@ class UserCockpitInitializator {
     async #setUsernameInStorage() {
         const response = await fetch(this.#authUserNameUrl);
         const username = await response.text();
+        console.log({username}, " test 1");
+        console.log(document.cookie);
         sessionStorage.setItem("username", username);
     }
 
     #setSiteTitle() {
         const username = sessionStorage.getItem("username");
+        console.log({username});
         document.querySelector("#site-title").textContent = this.#siteTitle(username);
     }
 
