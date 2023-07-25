@@ -62,7 +62,7 @@ class UserCockpitInitializator {
     async #setUsernameInStorage() {
         const response = await fetch(this.#authUserNameUrl);
         const username = await response.text();
-        console.log({username}, response.statusCode);
+        console.log({username}, response.status);
         console.log(document.cookie);
         sessionStorage.setItem("username", username);
     }
