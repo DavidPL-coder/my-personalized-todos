@@ -62,11 +62,11 @@ class UserCockpitInitializator {
     async #setUsernameInStorage() {
         const response = await fetch(this.#authUserNameUrl);
         const username = await response.text();
-        localStorage.setItem("username", username);
+        sessionStorage.setItem("username", username);
     }
 
     #setSiteTitle() {
-        const username = localStorage.getItem("username");
+        const username = sessionStorage.getItem("username");
         document.querySelector("#site-title").textContent = this.#siteTitle(username);
     }
 
@@ -190,7 +190,7 @@ class UserCockpitInitializator {
 
     async #loadSettingsOnSite() {
         // TODO: refactor it.
-        const username = localStorage.getItem("username");
+        const username = sessionStorage.getItem("username");
         const response = await fetch(this.#getSettingsUrl(username));
         const settings = await response.json();
 
@@ -226,7 +226,7 @@ class UserCockpitInitializator {
     }
 
     async #getToDosData() {
-        const username = localStorage.getItem("username");
+        const username = sessionStorage.getItem("username");
         const response = await fetch(this.#getTodosUrl(username));
         return await response.json();
     }
