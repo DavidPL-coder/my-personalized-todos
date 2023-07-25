@@ -42,7 +42,7 @@ namespace MyPersonalizedTodos.API.Services
             cookies.Append(_appConfig.TokenCookieName, token, new CookieOptions
             {
                 HttpOnly = false,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Secure = false,
                 Path = "/",
                 Expires = DateTime.Now.AddMinutes(_appConfig.JwtExpireHours) // change it !!!!!!!!
