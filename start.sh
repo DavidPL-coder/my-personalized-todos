@@ -1,1 +1,1 @@
-sudo docker-compose up --no-build --no-recreate
+sudo docker-compose up --no-build --no-recreate -d
