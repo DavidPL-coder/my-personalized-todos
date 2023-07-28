@@ -4,8 +4,6 @@ import axios from "axios";
 
 export default class RequestSender {
 
-    static SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
-
     static async get(url, req) {
         return await this.#sendRequest(async config => await axios.get(url, config), req.headers.cookie);
     }
@@ -23,7 +21,7 @@ export default class RequestSender {
     }
 
     static async getAuthorizedUserName(req) {
-        const response = await RequestSender.get(`${this.SERVER_URL}/api/account/username`, req);
+        const response = await RequestSender.get(`${process.env.MPT_BACKEND_URL_FOR_NODE}/api/account/username`, req);
         return response.data.name;
     }
 

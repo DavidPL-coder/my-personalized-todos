@@ -1,5 +1,7 @@
 "use strict";
 
+import { getAppConfig } from "./AppConfig.js";
+
 class RegisterFormValidator {
     #minLoginLength;
     #minPasswordLength;
@@ -9,19 +11,24 @@ class RegisterFormValidator {
     #planingCheckbox;
     #funCheckbox;
     #otherCheckbox;
+    #formActionValue;
     #serverURL;
+    #errorSiteURL;
 
     constructor() {
-        // TODO: Take constants from config file.
-        this.#minLoginLength = 4;
-        this.#minPasswordLength = 6;
-        this.#minAge = 5;
-        this.#maxAge = 200;
+        const config = getAppConfig();
+
+        this.#minLoginLength = Number(config.MIN_LOGIN_LENGTH);
+        this.#minPasswordLength = Number(config.MIN_PASSWORD_LENGTH);
+        this.#minAge = Number(config.MIN_AGE);
+        this.#maxAge = Number(config.MAX_AGE);
         this.#validationRules = [];
         this.#planingCheckbox = document.querySelector("#planing-checkbox");
         this.#funCheckbox = document.querySelector("#fun-checkbox");
         this.#otherCheckbox = document.querySelector("#other-checkbox");
-        this.#serverURL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
+        this.#formActionValue = `${config.FRONTEND_URL}/register`;
+        this.#serverURL = config.BACKEND_URL;
+        this.#errorSiteURL = `${config.FRONTEND_URL}/error`;
     }
 
     initValidator() {
@@ -29,6 +36,7 @@ class RegisterFormValidator {
         this.#setHidingOptionForPurposeCheckboxesValidationControl();
         this.#setValidationCheckBeforeSubmit();
         this.#setEventForModalCloseButton();
+        this.#setFormAction();
     }
 
     #setValidationRules() {
@@ -68,7 +76,7 @@ class RegisterFormValidator {
                 errorModalOverlay.style.display = "flex";
             }
             else
-                window.location.replace("http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/error"); // TODO: Get link from config or "global" variable
+                window.location.replace(this.#errorSiteURL);
         });
     }
 
@@ -131,6 +139,10 @@ class RegisterFormValidator {
 
             return -1;
         }
+    }
+
+    #setFormAction() {
+        document.querySelector("#register-form").action = this.#formActionValue;
     }
 }
 

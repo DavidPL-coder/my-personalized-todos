@@ -13,7 +13,6 @@ public enum AppDbConnectionStatus
     Succesfull
 }
 
-// TODO: Take db config from config file.
 public static class DbConnectionChecker
 {
     public static AppDbConnectionStatus GetConnectionStatus(DatabaseFacade appDb)
@@ -33,7 +32,7 @@ public static class DbConnectionChecker
     private static DbContext GetMasterDbContext()
     {
         var options = new DbContextOptionsBuilder()
-            .UseSqlServer("Server=mpt-database;Database=master;User Id=sa;Password=Password!_123")
+            .UseSqlServer(Environment.GetEnvironmentVariable("MPT_CONNECTION_STRING_FOR_CONNECTION_TEST"))
             .Options;
 
         return new DbContext(options);
@@ -55,7 +54,7 @@ public static class DbConnectionChecker
     private static void ConfigureCheckDbExistingCommand(DbCommand command)
     {
         command.CommandText = "SELECT name FROM sys.databases WHERE name = @appDb;";
-        var appDbNameParameter = new SqlParameter("@appDb", "MPT_Database");
+        var appDbNameParameter = new SqlParameter("@appDb", Environment.GetEnvironmentVariable("MPT_DATABASE_NAME"));
         command.Parameters.Add(appDbNameParameter);
     }
 }

@@ -26,11 +26,11 @@ namespace MyPersonalizedTodos.API.Services
         public string GenerateJwtToken(User user)
         {
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfig.JwtKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfig.MPT_JWT_KEY));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(_appConfig.JwtExpireHours);   // change it !!!!!!!!
+            var expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS);   // change it !!!!!!!!
                                                                                     
-            var token = new JwtSecurityToken(_appConfig.JwtIssuer, _appConfig.JwtAudience, claims, null, expires, credentials);
+            var token = new JwtSecurityToken(_appConfig.MPT_JWT_ISSUER, _appConfig.MPT_JWT_AUDIENCE, claims, null, expires, credentials);
             var tokenHandler = new JwtSecurityTokenHandler();
 
             return tokenHandler.WriteToken(token);
@@ -39,13 +39,13 @@ namespace MyPersonalizedTodos.API.Services
         public void SaveTokenToCookie(string token)
         {
             var cookies = _contextAccessor.HttpContext.Response.Cookies;
-            cookies.Append(_appConfig.TokenCookieName, token, new CookieOptions
+            cookies.Append(_appConfig.MPT_TOKEN_COOKIE_NAME, token, new CookieOptions
             {
                 HttpOnly = false,
                 SameSite = SameSiteMode.Lax,
                 Secure = false,
                 Path = "/",
-                Expires = DateTime.Now.AddMinutes(_appConfig.JwtExpireHours) // change it !!!!!!!!
+                Expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS) // change it !!!!!!!!
             });
         }
     }

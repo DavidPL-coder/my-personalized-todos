@@ -2,7 +2,16 @@ import RequestSender from "./RequestSender.js"
 
 export default class EndpointPipelineContainer {
 
-    static SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
+    static SERVER_URL = process.env.MPT_BACKEND_URL_FOR_NODE;
+
+    static renderHtmlFile(res, fileName, renderVariables = {}) {
+        const cookieValue = JSON.stringify(global.appConfig);
+        const cookieOptions = { sameSite: "Lax"};
+        const filePath = `${global.__dirname}/${fileName}`;
+
+        res.cookie("app-config", cookieValue, cookieOptions);
+        res.render(filePath, renderVariables);
+    };
 
     static async register(req, res) {
         if (typeof (req.body.purposes) === "string")
@@ -10,12 +19,12 @@ export default class EndpointPipelineContainer {
 
         const response = await RequestSender.post(`${this.SERVER_URL}/api/users`, req.body, req); 
         if (response?.status !== 200)
-            return res.redirect("/error");
+            res.redirect("/error");
 
-        return res.redirect("/login");
+        res.redirect("/login");
     }
 
-    static async login(req, res, dirname) {
+    static async login(req, res) {
         req.body.login = req.body.login.trim();
         req.body.password = req.body.password.trim();
 
@@ -24,12 +33,12 @@ export default class EndpointPipelineContainer {
         
         if (statusCode == 200) {
             res.setHeader("set-cookie", response.headers["set-cookie"]);
-            return res.redirect("/todos");
+            res.redirect("/todos");
         }
         else if (statusCode == 400)
-            return res.render(dirname + "/login.html", { errorModalDisplayMode: "flex" });
+            res.render(global.__dirname + "/login.html", { errorModalDisplayMode: "flex" });
         else
-            return res.redirect("/error");
+            res.redirect("/error");
     }
 
     static async addToDo(req, res) {
@@ -37,18 +46,18 @@ export default class EndpointPipelineContainer {
         const username = await RequestSender.getAuthorizedUserName(req);
         const response = await RequestSender.post(`${this.SERVER_URL}/api/users/${username}/todos`, dataToSend, req);
         if (response?.status !== 200)
-            return res.redirect("/error");
+            res.redirect("/error");
 
-        return res.redirect("/todos");
+        res.redirect("/todos");
     }
 
     static async deleteToDo(req, res) {
         const username = await RequestSender.getAuthorizedUserName(req);
         const response = await RequestSender.delete(`${this.SERVER_URL}/api/users/${username}/todos/${req.params.todoTitle}`, req);
         if (response?.status !== 200)
-            return res.redirect("/error");
+            res.redirect("/error");
 
-        return res.redirect("/todos");
+        res.redirect("/todos");
     }
 
     static async editToDo(req, res) {
@@ -56,14 +65,14 @@ export default class EndpointPipelineContainer {
         const username = await RequestSender.getAuthorizedUserName(req);
         const response = await RequestSender.put(`${this.SERVER_URL}/api/users/${username}/todos/${req.params.todoTitle}`, dataToSend, req);
         if (response?.status !== 200)
-            return res.redirect("/error");
+            res.redirect("/error");
 
-        return res.redirect("/todos");
+        res.redirect("/todos");
     }
 
     static async authorizedUserName(req, res) {
         const username = await RequestSender.getAuthorizedUserName(req);
-        return res.send(username);
+        res.send(username);
     }
 
     static async editSettings(req, res) {
@@ -75,9 +84,9 @@ export default class EndpointPipelineContainer {
         const username = await RequestSender.getAuthorizedUserName(req);
         const response = await RequestSender.put(`${this.SERVER_URL}/api/users/${username}/settings`, req.body, req);
         if (response?.status !== 200)
-            return res.redirect("/error");
+            res.redirect("/error");
 
-        return res.redirect("/todos");
+        res.redirect("/todos");
     }
 
     static #parseTodoData(data) {

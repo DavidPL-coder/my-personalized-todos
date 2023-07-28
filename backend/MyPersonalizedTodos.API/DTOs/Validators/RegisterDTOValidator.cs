@@ -9,19 +9,19 @@ public class RegisterDTOValidator : AbstractValidator<RegisterUserDTO>
 {
     //TODO: Improve 'Age' and 'DateOfBirth' validation
 
-    public RegisterDTOValidator(AppDbContext dbContext)
+    public RegisterDTOValidator(AppDbContext dbContext, AppConfig appConfig)
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(dto => dto.Login)
             .NotEmpty()
-            .MinimumLength(4)
+            .MinimumLength(appConfig.MPT_MIN_LOGIN_LENGTH)
             .Must(property => !property.Any(char.IsWhiteSpace)).WithMessage("'{PropertyName}' can't contain whitespaces.")
             .Must(providedLogin => dbContext.Users.All(user => user.Name != providedLogin)).WithMessage("Provided '{PropertyName}' is reserved by other user.");
 
         RuleFor(dto => dto.Password)
             .NotEmpty()
-            .MinimumLength(6)
+            .MinimumLength(appConfig.MPT_MIN_PASSWORD_LENGTH)
             .Must(property => !property.Any(char.IsWhiteSpace)).WithMessage("'{PropertyName}' can't contain whitespaces.");
 
         RuleFor(dto => dto.ConfirmPassword)
@@ -29,7 +29,7 @@ public class RegisterDTOValidator : AbstractValidator<RegisterUserDTO>
 
         RuleFor(dto => dto.Age)
             .NotEmpty()
-            .InclusiveBetween(5, 200);
+            .InclusiveBetween(appConfig.MPT_MIN_AGE, appConfig.MPT_MAX_AGE);
 
         RuleFor(dto => dto.DateOfBirth)
             .NotEmpty();

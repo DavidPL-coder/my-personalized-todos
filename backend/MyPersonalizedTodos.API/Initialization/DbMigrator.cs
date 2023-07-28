@@ -4,7 +4,8 @@ using MyPersonalizedTodos.API.Database;
 
 namespace MyPersonalizedTodos.API.Initialization;
 
-// TODO: Take some constants from config file.
+// TODO: Refactor it.
+// TODO: Make the class as non-static. It will be maybe a good idea.
 public static class DbMigrator
 {
     private static ILogger _logger;
@@ -14,9 +15,11 @@ public static class DbMigrator
         using var serviceScope = app.Services.CreateScope();
         var appDatabase = serviceScope.ServiceProvider.GetService<AppDbContext>().Database;
         _logger = app.Logger;
+        var connectionTimeLimit = int.Parse(app.Configuration["MPT_DB_CONNECTION_LIMIT"]);
+        var waitingInterval = int.Parse(app.Configuration["MPT_DB_CONNECTION_WAITING_TIME"]);
 
         var waitingTime = 0;
-        while (waitingTime < 30_000)
+        while (waitingTime < connectionTimeLimit)
         {
             var dbConnectionStatus = DbConnectionChecker.GetConnectionStatus(appDatabase);
             if (dbConnectionStatus == AppDbConnectionStatus.Succesfull)
@@ -25,8 +28,8 @@ public static class DbMigrator
             if (dbConnectionStatus == AppDbConnectionStatus.DbNotExist)
                 return CreateAppDbWithTables(appDatabase);
 
-            WaitForNextConnectionAttempt(dbConnectionStatus, waitingTime);
-            waitingTime += 400;
+            WaitForNextConnectionAttempt(dbConnectionStatus, waitingTime, waitingInterval);
+            waitingTime += waitingInterval;
         }
 
         return false;
@@ -45,10 +48,10 @@ public static class DbMigrator
         return true;
     }
 
-    private static void WaitForNextConnectionAttempt(AppDbConnectionStatus dbConnectionStatus, int waitingTime)
+    private static void WaitForNextConnectionAttempt(AppDbConnectionStatus dbConnectionStatus, int waitingTime, int waitingInterval)
     {
         var thingToConnect = dbConnectionStatus == AppDbConnectionStatus.NoDbServerConnection ? "DB SERVER" : "DATABASE";
         _logger.LogWarning($"Waiting for {thingToConnect} connection. {waitingTime}ms have passed.");
-        Thread.Sleep(400);
+        Thread.Sleep(waitingInterval);
     }
 }

@@ -5,8 +5,9 @@ services:
     build:
       context: ./frontend
     ports:
-      - "80:80"
-      # - "443:443"
+      - "${MPT_FRONTEND_CONTAINER_PORT}:${MPT_FRONTEND_CONTAINER_PORT}"
+    env_file:
+      - ./.env
     # volumes:
       # - ./https/:/usr/src/app/https/
     depends_on:
@@ -16,8 +17,9 @@ services:
     build:
       context: ./backend
     ports:
-      - "8080:8080"
-      # - "4443:4443"
+      - "${MPT_BACKEND_CONTAINER_PORT}:${MPT_BACKEND_CONTAINER_PORT}"
+    env_file:
+      - ./.env
     # volumes:
       # - ./aspnetapp.pfx:/https/aspnetapp.pfx
       # - /c/temp-keys:/root/.aspnet/DataProtection-Keys
@@ -31,10 +33,12 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     user: root
     environment:
-      - MSSQL_SA_PASSWORD=Password!_123
+      - MSSQL_SA_PASSWORD=${MPT_DB_USER_PASSWORD}
       - ACCEPT_EULA=Y
+    env_file:
+      - ./.env
     ports:
-      - "1433:1433"
+      - "${MPT_DATABASE_CONTAINER_PORT}:${MPT_DATABASE_CONTAINER_PORT}"
     volumes:
       - ./db_data/data:/var/opt/mssql/data
       - ./db_data/log:/var/opt/mssql/log

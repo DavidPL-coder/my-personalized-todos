@@ -1,7 +1,8 @@
 "use strict";
 
+import { getAppConfig } from "./AppConfig.js";
+
 class UserCockpitInitializator {
-    // TODO: take constants from config.
     #cancelTextContent;
     #authUserNameUrl;
     #siteTitle;
@@ -16,27 +17,29 @@ class UserCockpitInitializator {
     #transformOfTodoToDelete;
     #todoForm;
     #panelRemoveBtn;
+    #settingsFormAction;
     #getSettingsUrl;
     #settingsColorInputsWithDefaults;
 
     constructor() {
-        const SERVER_URL = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com:8080";
+        const config = getAppConfig();
 
         this.#cancelTextContent = "Anuluj";
-        this.#authUserNameUrl = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/authorized-user-name";
+        this.#authUserNameUrl = `${config.FRONTEND_URL}/authorized-user-name`;
         this.#siteTitle = username => "Lista user'a " + username;
         this.#noTodosInfo = "Brak zadań.";
-        this.#getTodosUrl = username => `${SERVER_URL}/api/users/${username}/todos`;
+        this.#getTodosUrl = username => `${config.BACKEND_URL}/api/users/${username}/todos`;
         this.#modalTitleInUpdateMode = "Edycja Twojego ToDo";
         this.#modalTitleInAddMode = "Dodawanie Nowego ToDo";
-        this.#deleteTodoUrl = todoTitle => `http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/delete-todo/${todoTitle}`;
-        this.#updateTodoUrl = todoTitle => `http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/edit-todo/${todoTitle}`;
-        this.#addTodoUrl = "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com/add-todo";
+        this.#deleteTodoUrl = todoTitle => `${config.FRONTEND_URL}/delete-todo/${todoTitle}`;
+        this.#updateTodoUrl = todoTitle => `${config.FRONTEND_URL}/edit-todo/${todoTitle}`;
+        this.#addTodoUrl = `${config.FRONTEND_URL}/add-todo`;
         this.#boxShadowOfTodoToDelete = "0px 0px 7px 1px darkred";
         this.#transformOfTodoToDelete = "scale(1.03)";
         this.#todoForm = document.querySelector("#todo-form");
         this.#panelRemoveBtn = document.querySelector("#panel-remove-button");
-        this.#getSettingsUrl = username => `${SERVER_URL}/api/users/${username}/settings`;
+        this.#settingsFormAction = `${config.FRONTEND_URL}/edit-settings`;
+        this.#getSettingsUrl = username => `${config.BACKEND_URL}/api/users/${username}/settings`;
         this.#settingsColorInputsWithDefaults = [
             { input: document.querySelector("#text-color-input"), defaultValue: "#ffffff" },
             { input: document.querySelector("#background-color-input"), defaultValue: "#222930"},
@@ -56,6 +59,7 @@ class UserCockpitInitializator {
         this.#setValidationForRequiredInputs();
         this.#setParsingForSettings();
         this.#setEventForUserSettingsButton();
+        this.#setActionValueForSettingsForm();
         await this.#loadSettingsOnSite();
     }
 
@@ -186,6 +190,10 @@ class UserCockpitInitializator {
             const settings = document.querySelector("#settings");
             settings.style.display = getComputedStyle(settings).display == "none" ? "inline-block" : null; // TODO: instead of null, just remove style attribute
         });
+    }
+
+    #setActionValueForSettingsForm() {
+        document.querySelector("#settings-form").action = this.#settingsFormAction;
     }
 
     async #loadSettingsOnSite() {

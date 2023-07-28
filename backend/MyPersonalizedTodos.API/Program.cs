@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Text;
 
 // TODO: The file is too big. Move some code to another files.
-// TODO: Take constants from config file, don't use them in code.
 // TODO: write unit tests.
 // TODO: Configure JsonConverter
 
@@ -28,17 +27,16 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 
-var appConfig = builder.Configuration.GetSection(nameof(AppConfig)).Get<AppConfig>();
+var appConfig = builder.Configuration.Get<AppConfig>();
 builder.Services.AddSingleton(appConfig);
 
 builder.Services.AddCors(options =>
 {
-    // TODO: Add the address of app on production 
-    options.AddPolicy(appConfig.CorsPolicyName, policyBuilder => policyBuilder.WithOrigins("http://localhost", "http://mpt-frontend-container", "http://192.168.0.168", "http://ec2-52-57-252-68.eu-central-1.compute.amazonaws.com")
+    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL, "http://mpt-frontend-container")
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 });
 
-builder.Services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(appConfig.ConnectionString));
+builder.Services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(appConfig.MPT_CONNECTION_STRING));
 
 // builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"/root/.aspnet/DataProtection-Keys"));
 
@@ -53,17 +51,17 @@ builder.Services.AddAuthentication(options =>
     cfg.SaveToken = true;
     cfg.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = appConfig.JwtIssuer,
-        ValidAudience = appConfig.JwtAudience,
+        ValidIssuer = appConfig.MPT_JWT_ISSUER,
+        ValidAudience = appConfig.MPT_JWT_AUDIENCE,
         ClockSkew = TimeSpan.Zero,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appConfig.JwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appConfig.MPT_JWT_KEY))
     };
     cfg.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
         {
-            if (context.Request.Cookies.ContainsKey(appConfig.TokenCookieName))
-                context.Token = context.Request.Cookies[appConfig.TokenCookieName];
+            if (context.Request.Cookies.ContainsKey(appConfig.MPT_TOKEN_COOKIE_NAME))
+                context.Token = context.Request.Cookies[appConfig.MPT_TOKEN_COOKIE_NAME];
 
             return Task.CompletedTask;
         }
@@ -74,13 +72,13 @@ builder.Services.Scan(scan => scan.FromCallingAssembly().AddClasses(publicOnly: 
     .AsImplementedInterfaces()
     .WithScopedLifetime());
 
-builder.WebHost.UseUrls(appConfig.AppUrls);
+builder.WebHost.UseUrls(appConfig.MPT_APP_URLS);
 
 var app = builder.Build();
 
 if (!DbMigrator.TryToMigrate(app))
 {
-    app.Logger.LogCritical("The limit waiting for connection (30s) has been passed. Can't connect to db.");
+    app.Logger.LogCritical($"The limit waiting for connection ({appConfig.MPT_DB_CONNECTION_LIMIT/1000}s) has been passed. Can't connect to db.");
     return;
 }
 
@@ -92,7 +90,7 @@ if (app.Environment.IsDevelopment())
 
 // TODO: Use HSTS
 
-app.UseCors(appConfig.CorsPolicyName);
+app.UseCors(appConfig.MPT_CORS_POLICY_NAME);
 
 app.UseAuthentication();
 

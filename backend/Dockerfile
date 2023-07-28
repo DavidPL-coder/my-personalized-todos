@@ -2,9 +2,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /source
 
-# EXPOSE 4443
-EXPOSE 8080
-
 # copy csproj and restore as distinct layers
 COPY *.sln .
 COPY MyPersonalizedTodos.API/*.csproj ./MyPersonalizedTodos.API/

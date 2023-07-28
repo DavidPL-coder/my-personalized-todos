@@ -5,9 +5,11 @@
 
 # Other files and folders 
 # https (folder with ssl certs)
-https
-db_data
+https/
+db_data/
 appsettings.Development.json
+.env
+.env.prod
 
 # User-specific files
 *.rsuser
