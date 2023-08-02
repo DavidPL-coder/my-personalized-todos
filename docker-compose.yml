@@ -30,7 +30,7 @@ services:
       - mpt-database
 
   mpt-database:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU6-ubuntu-20.04
     user: root
     environment:
       - MSSQL_SA_PASSWORD=${MPT_DB_USER_PASSWORD}
