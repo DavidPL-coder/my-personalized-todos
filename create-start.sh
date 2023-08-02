@@ -1,2 +1,2 @@
-sudo docker-compose down
-sudo docker-compose up --build --force-recreate
+sudo docker-compose down;
+sudo docker-compose up --build --force-recreate;
