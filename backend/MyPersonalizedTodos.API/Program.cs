@@ -32,7 +32,7 @@ builder.Services.AddSingleton(appConfig);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL, appConfig.MPT_FRONTEND_URL_FOR_CORS)
+    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL)
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 });
 

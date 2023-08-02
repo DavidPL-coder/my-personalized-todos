@@ -5,7 +5,6 @@ namespace MyPersonalizedTodos.API
     {
         public string MPT_CORS_POLICY_NAME { get; init; }
         public string MPT_CORS_ALLOWED_URL { get; init; }
-        public string MPT_FRONTEND_URL_FOR_CORS { get; init; }
         public string MPT_CONNECTION_STRING { get; init; }
         public string MPT_CONNECTION_STRING_FOR_CONNECTION_TEST { get; init; }
         public string MPT_DATABASE_NAME { get; init; }
