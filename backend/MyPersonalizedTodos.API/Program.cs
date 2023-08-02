@@ -32,7 +32,7 @@ builder.Services.AddSingleton(appConfig);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL, "http://mpt-frontend-container")
+    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL, appConfig.MPT_FRONTEND_URL_FOR_CORS)
         .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
 });
 
@@ -72,13 +72,11 @@ builder.Services.Scan(scan => scan.FromCallingAssembly().AddClasses(publicOnly: 
     .AsImplementedInterfaces()
     .WithScopedLifetime());
 
-builder.WebHost.UseUrls(appConfig.MPT_APP_URLS);
-
 var app = builder.Build();
 
 if (!DbMigrator.TryToMigrate(app))
 {
-    app.Logger.LogCritical($"The limit waiting for connection ({appConfig.MPT_DB_CONNECTION_LIMIT/1000}s) has been passed. Can't connect to db.");
+    app.Logger.LogCritical("The limit waiting for connection ({ConnectionLimit}s) has been passed. Can't connect to db.", appConfig.MPT_DB_CONNECTION_LIMIT/1000);
     return;
 }
 
@@ -88,13 +86,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// TODO: Use HSTS
-
 app.UseCors(appConfig.MPT_CORS_POLICY_NAME);
 
 app.UseAuthentication();
-
-// app.UseHttpsRedirection();
 
 app.UseRouting();
 

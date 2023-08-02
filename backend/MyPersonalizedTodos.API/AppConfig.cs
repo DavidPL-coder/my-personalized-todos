@@ -5,6 +5,7 @@ namespace MyPersonalizedTodos.API
     {
         public string MPT_CORS_POLICY_NAME { get; init; }
         public string MPT_CORS_ALLOWED_URL { get; init; }
+        public string MPT_FRONTEND_URL_FOR_CORS { get; init; }
         public string MPT_CONNECTION_STRING { get; init; }
         public string MPT_CONNECTION_STRING_FOR_CONNECTION_TEST { get; init; }
         public string MPT_DATABASE_NAME { get; init; }
@@ -15,7 +16,6 @@ namespace MyPersonalizedTodos.API
         public string MPT_JWT_KEY { get; init; }
         public int MPT_JWT_EXPIRE_HOURS { get; init; }
         public string MPT_TOKEN_COOKIE_NAME { get; init; }
-        public string MPT_APP_URLS { get; init; }
         public int MPT_MIN_LOGIN_LENGTH { get; init; }
         public int MPT_MIN_PASSWORD_LENGTH { get; init; }
         public int MPT_MIN_AGE { get; init; }
