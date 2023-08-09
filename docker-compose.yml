@@ -8,8 +8,8 @@ services:
       - "${MPT_FRONTEND_CONTAINER_PORT}:${MPT_FRONTEND_CONTAINER_PORT}"
     env_file:
       - ./.env
-    # volumes:
-      # - ./https/:/usr/src/app/https/
+    volumes:
+      - ${MPT_SSL_FILES_PATH}:/usr/src/app/https/
     depends_on:
       - mpt-backend-container
 
@@ -20,12 +20,9 @@ services:
       - "${MPT_BACKEND_CONTAINER_PORT}:${MPT_BACKEND_CONTAINER_PORT}"
     env_file:
       - ./.env
-    # volumes:
-      # - ./aspnetapp.pfx:/https/aspnetapp.pfx
+    volumes:
+      - ${MPT_SSL_FILES_PATH}:/https/
       # - /c/temp-keys:/root/.aspnet/DataProtection-Keys
-    # environment:
-      # - ASPNETCORE_Kestrel__Certificates__Default__Password=passwd1234
-      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     depends_on:
       - mpt-database
 

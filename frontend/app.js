@@ -3,15 +3,13 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-// import * as https from "https";
+import * as https from "https";
 import EndpointPipelineContainer from "./initialization/EndpointPipelineContainer.js";
-// import HttpsSecurityOptionsProvider from "./initialization/HttpsSecurityOptionsProvider.js";
-// import ProjectPathGetter from "./initialization/ProjectPathGetter.js";
+import HttpsSecurityOptionsProvider from "./initialization/HttpsSecurityOptionsProvider.js";
 import AppConfigProvider from "./initialization/AppConfigProvider.js";
 import ejs from "ejs";
 
 // TODO: write unit tests.
-// TODO: Take constants from config file don't use them in code.
 // TODO: Some code should be execute in only development mode (for example: using self signed cert)
 
 const __filename = fileURLToPath(import.meta.url);
@@ -44,16 +42,16 @@ app.post("/edit-todo/:todoTitle", async (req, res) => await EndpointPipelineCont
 
 app.post("/edit-settings", async (req, res) => await EndpointPipelineContainer.editSettings(req, res));
 
-// https.globalAgent.options.rejectUnauthorized = false; // use it for development https config // ?????
+// TODO: refactor it all below
+https.globalAgent.options.rejectUnauthorized = false; // use it for development https config // ?????
+const PORT = global.appConfig.FRONTEND_CONTAINER_PORT;
 
-/// https config:
-// const __projectpath = ProjectPathGetter.getPath(__filepath, process.env.NODE_ENV);
-// const httpsSecurityOptions = HttpsSecurityOptionsProvider.getOptions(__projectpath);
-// https.createServer(httpsSecurityOptions, app)
-//     .listen(443, () => console.log("My personalized todos app (frontend) listen to 443 port (https)."));
+const shouldAppConfigureForHttps = process.env.MPT_APP_PROTOCOL === "https" && 
+    process.env.MPT_CERT_FILE_NAME != undefined && process.env.MPT_KEY_FILE_NAME != undefined &&
+    process.env.MPT_SSL_FILES_PATH != undefined;
 
-///app.enable('trust proxy');
-///app.set('trust proxy', 1);
+const appRunner = shouldAppConfigureForHttps 
+    ? https.createServer(HttpsSecurityOptionsProvider.getOptions(__filepath), app) 
+    : app;
 
-app.listen(global.appConfig.FRONTEND_CONTAINER_PORT, 
-    () => console.log(`My personalized todos app (frontend) listen to ${global.appConfig.FRONTEND_CONTAINER_PORT} port.`));
+appRunner.listen(PORT, () => console.log(`My personalized todos app (frontend) listen to ${PORT} port (${process.env.MPT_APP_PROTOCOL}).`));

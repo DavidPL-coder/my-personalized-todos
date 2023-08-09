@@ -2,10 +2,15 @@ import fs from "fs";
 
 export default class HttpsSecurityOptionsProvider {
     static getOptions(projectpath) {
-        const key = fs.readFileSync(projectpath + "/https/key.pem");
-        const cert = fs.readFileSync(projectpath + "/https/cert.pem");
+        let options = {
+            key: fs.readFileSync(projectpath + `/https/${process.env.MPT_KEY_FILE_NAME}`),
+            cert: fs.readFileSync(projectpath + `/https/${process.env.MPT_CERT_FILE_NAME}`)
+        }
+        
+        if (process.env.MPT_SSL_PASSWORD != undefined)
+            options.passphrase = process.env.MPT_SSL_PASSWORD;
 
-        return { key, cert, passphrase: 'qwerty' };
+        return options;
     }
 }
 
