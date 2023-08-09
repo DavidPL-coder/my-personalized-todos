@@ -43,7 +43,9 @@ app.post("/edit-todo/:todoTitle", async (req, res) => await EndpointPipelineCont
 app.post("/edit-settings", async (req, res) => await EndpointPipelineContainer.editSettings(req, res));
 
 // TODO: refactor it all below
-https.globalAgent.options.rejectUnauthorized = false; // use it for development https config // ?????
+if (process.env.MPT_APP_PROTOCOL === "https" && process.env.NODE_ENV === "Development")
+    https.globalAgent.options.rejectUnauthorized = false;
+
 const PORT = global.appConfig.FRONTEND_CONTAINER_PORT;
 
 const shouldAppConfigureForHttps = process.env.MPT_APP_PROTOCOL === "https" && 
