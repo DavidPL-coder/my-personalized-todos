@@ -1,0 +1,28 @@
+{
+    // I don't know it's a good to push it to repository.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Firefox (assets js files)",
+            "type": "firefox",
+            "request": "launch",
+            "url": "https://localhost", // check .env file
+            "webRoot": "${workspaceFolder}/frontend/public"
+        },
+        {
+            "name": "Chrome (assets js files)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "https://localhost", // check .env file
+            "webRoot": "${workspaceFolder}/frontend/public"
+        },
+        {
+            "name": "Node (Docker Attach)",
+            "type": "node",
+            "request": "attach",
+            "restart": true,
+            "localRoot": "${workspaceFolder}/frontend",
+            "remoteRoot": "/usr/src/app/"
+        }
+    ]
+}

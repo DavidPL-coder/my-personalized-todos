@@ -1,23 +1,14 @@
-﻿{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:35739",
-      "sslPort": 44353
-    }
-  },
+{
   "profiles": {
     "MyPersonalizedTodos.API": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:4443;http://localhost:8080",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:4443;http://localhost:8080"
     },
     "IIS Express": {
       "commandName": "IISExpress",
@@ -30,6 +21,22 @@
     "Docker_script": {
       "commandName": "Executable",
       "executablePath": "..\\..\\..\\..\\..\\create-start.bat"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:35739",
+      "sslPort": 44353
     }
   }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectVersion>2.1</ProjectVersion>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <ProjectGuid>1e0f3979-1183-4e5c-a9de-f559a85effbb</ProjectGuid>
+	<DockerComposeBaseFilePath>../docker-compose</DockerComposeBaseFilePath>
+	<DockerComposeProjectName>my-personalized-todos</DockerComposeProjectName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".dockerignore" />
+	<None Include="MyPersonalizedTodos.API/Dockerfile" />
+	<None Include="../docker-compose.yml">
+      <Link>docker-compose.yml</Link>
+	</None>
+	<None Include="../.env">
+      <Link>.env</Link>
+	</None>
+  </ItemGroup>
+</Project>
