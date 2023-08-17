@@ -10,6 +10,7 @@ db_data/
 appsettings.Development.json
 .env
 .env.prod
+docker-compose.prod.yml
 
 # User-specific files
 *.rsuser

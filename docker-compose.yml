@@ -2,38 +2,44 @@ version: '3.9'
 
 services:
   mpt-frontend-container:
+    container_name: mpt-frontend-container
     build:
       context: ./frontend
     ports:
       - "${MPT_FRONTEND_CONTAINER_PORT}:${MPT_FRONTEND_CONTAINER_PORT}"
+      - "${MPT_NODE_DEBUGGER_PORT}:${MPT_NODE_DEBUGGER_PORT}"
     env_file:
-      - ./.env
+      - .env
     volumes:
-      - ${MPT_SSL_FILES_PATH}:/usr/src/app/https/
+      - ${MPT_SSL_FILES_PATH}:/usr/src/app/https/:ro
     depends_on:
       - mpt-backend-container
+    command: node --inspect=0.0.0.0:${MPT_NODE_DEBUGGER_PORT} app.js # use it only for development
 
   mpt-backend-container:
+    container_name: mpt-backend-container
     build:
-      context: ./backend
+      context: ./backend/MyPersonalizedTodos.API/
     ports:
       - "${MPT_BACKEND_CONTAINER_PORT}:${MPT_BACKEND_CONTAINER_PORT}"
     env_file:
-      - ./.env
+      - .env
     volumes:
-      - ${MPT_SSL_FILES_PATH}:/https/
+      - ${MPT_SSL_FILES_PATH}:/https/:ro
       # - /c/temp-keys:/root/.aspnet/DataProtection-Keys
     depends_on:
       - mpt-database
 
   mpt-database:
+    container_name: mpt-database
     image: mcr.microsoft.com/mssql/server:2022-CU6-ubuntu-20.04
     user: root
     environment:
+      - MSSQL_PID="Express"
       - MSSQL_SA_PASSWORD=${MPT_DB_USER_PASSWORD}
       - ACCEPT_EULA=Y
     env_file:
-      - ./.env
+      - .env
     ports:
       - "${MPT_DATABASE_CONTAINER_PORT}:${MPT_DATABASE_CONTAINER_PORT}"
     volumes:

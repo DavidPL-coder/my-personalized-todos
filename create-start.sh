@@ -1,2 +1,2 @@
-sudo docker-compose down;
-sudo docker-compose up --build --force-recreate;
+sudo docker-compose -f docker-compose.prod.yml down;
+sudo docker-compose -f docker-compose.prod.yml up --build --force-recreate;

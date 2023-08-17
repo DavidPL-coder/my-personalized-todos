@@ -1,1 +1,1 @@
-sudo docker-compose restart -d;
+sudo docker-compose -f docker-compose.prod.yml restart -d;
