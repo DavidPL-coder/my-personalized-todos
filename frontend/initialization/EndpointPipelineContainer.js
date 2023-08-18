@@ -6,7 +6,7 @@ export default class EndpointPipelineContainer {
 
     static renderPage(res, fileName, renderVariables = {}) {
         const cookieValue = JSON.stringify(global.appConfig);
-        const cookieOptions = { sameSite: "Lax" };
+        const cookieOptions = { sameSite: "Strict" };
         const filePath = `${global.__dirname}/${fileName}`;
 
         res.cookie("app-config", cookieValue, cookieOptions);

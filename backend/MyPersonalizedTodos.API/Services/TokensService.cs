@@ -29,7 +29,7 @@ namespace MyPersonalizedTodos.API.Services
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfig.MPT_JWT_KEY));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS);
+            var expires = DateTime.Now.AddHours(_appConfig.MPT_JWT_EXPIRE_HOURS);
                                                                                     
             var token = new JwtSecurityToken(_appConfig.MPT_JWT_ISSUER, _appConfig.MPT_JWT_AUDIENCE, claims, null, expires, credentials);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -40,13 +40,16 @@ namespace MyPersonalizedTodos.API.Services
         public void SaveTokenToCookie(string token)
         {
             var cookies = _contextAccessor.HttpContext.Response.Cookies;
+            var hasSecureMode = // _appConfig.ASPNETCORE_ENVIRONMENT.ToLowerInvariant() == "production" || // TODO: Uncomment this when production will be prepare for using only HTTPS
+                _appConfig.MPT_APP_PROTOCOL.ToLowerInvariant() == "https";
+
             cookies.Append(_appConfig.MPT_TOKEN_COOKIE_NAME, token, new CookieOptions
             {
-                HttpOnly = false,
-                SameSite = SameSiteMode.Lax,
-                Secure = false,
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+                Secure = hasSecureMode,
                 Path = "/",
-                Expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS)
+                Expires = DateTime.Now.AddHours(_appConfig.MPT_JWT_EXPIRE_HOURS)
             });
         }
 

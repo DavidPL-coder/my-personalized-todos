@@ -8,6 +8,7 @@ using MyPersonalizedTodos.API.Services;
 
 namespace MyPersonalizedTodos.API.Controllers
 {
+    // TODO: Let user decide where save token (cookie or nowhere)
     public class TokensController : BaseApiController
     {
         private readonly AppDbContext _context;
