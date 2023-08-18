@@ -4,6 +4,8 @@ import { getAppConfig } from "./AppConfig.js";
 
 class UserCockpitInitializator {
     #cancelTextContent;
+    #errorSiteURL;
+    #unauthorizedSiteURL;
     #authUserNameUrl;
     #siteTitle;
     #noTodosInfo;
@@ -25,6 +27,8 @@ class UserCockpitInitializator {
         const config = getAppConfig();
 
         this.#cancelTextContent = "Anuluj";
+        this.#errorSiteURL = `${config.FRONTEND_URL}/error`;
+        this.#unauthorizedSiteURL = `${config.FRONTEND_URL}/unauthorized`;
         this.#authUserNameUrl = `${config.FRONTEND_URL}/authorized-user-name`;
         this.#siteTitle = username => "Lista user'a " + username;
         this.#noTodosInfo = "Brak zadań.";

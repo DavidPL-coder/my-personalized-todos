@@ -1,0 +1,30 @@
+#container {
+    position: relative;
+    justify-content: center;
+}
+
+.content-box {
+    padding: 10px;
+    font-size: 22px;
+}
+
+#login-button {
+    font-size: 24px;
+    width: 100%;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+@media screen and (max-width: 575px) {
+    .content-box {
+        font-size: 18px;
+        width: 94%;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+}

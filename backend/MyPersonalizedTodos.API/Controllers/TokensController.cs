@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyPersonalizedTodos.API.Database;
 using MyPersonalizedTodos.API.Database.Entities;
@@ -7,7 +8,6 @@ using MyPersonalizedTodos.API.Services;
 
 namespace MyPersonalizedTodos.API.Controllers
 {
-    // TODO: Add logout option.
     public class TokensController : BaseApiController
     {
         private readonly AppDbContext _context;
@@ -35,6 +35,14 @@ namespace MyPersonalizedTodos.API.Controllers
             var token = _tokensService.GenerateJwtToken(user);
             _tokensService.SaveTokenToCookie(token);
 
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpDelete] // TODO: maybe using post would be a great idea
+        public IActionResult Logout() 
+        {
+            _tokensService.DeleteCookieWithToken();
             return Ok();
         }
     }

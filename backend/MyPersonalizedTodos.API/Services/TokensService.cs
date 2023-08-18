@@ -10,6 +10,7 @@ namespace MyPersonalizedTodos.API.Services
     {
         string GenerateJwtToken(User user);
         void SaveTokenToCookie(string token);
+        void DeleteCookieWithToken();
     }
 
     public class TokensService : ITokensService
@@ -28,7 +29,7 @@ namespace MyPersonalizedTodos.API.Services
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfig.MPT_JWT_KEY));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS);   // change it !!!!!!!!
+            var expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS);
                                                                                     
             var token = new JwtSecurityToken(_appConfig.MPT_JWT_ISSUER, _appConfig.MPT_JWT_AUDIENCE, claims, null, expires, credentials);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -45,8 +46,15 @@ namespace MyPersonalizedTodos.API.Services
                 SameSite = SameSiteMode.Lax,
                 Secure = false,
                 Path = "/",
-                Expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS) // change it !!!!!!!!
+                Expires = DateTime.Now.AddMinutes(_appConfig.MPT_JWT_EXPIRE_HOURS)
             });
+        }
+
+        public void DeleteCookieWithToken()
+        {
+            // TODO: Delete token too.
+            var cookies = _contextAccessor.HttpContext.Response.Cookies;
+            cookies.Delete(_appConfig.MPT_TOKEN_COOKIE_NAME);
         }
     }
 }

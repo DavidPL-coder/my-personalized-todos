@@ -4,7 +4,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import * as https from "https";
-import EndpointPipelineContainer from "./initialization/EndpointPipelineContainer.js";
+import Endpoints from "./initialization/EndpointPipelineContainer.js";
 import HttpsSecurityOptionsProvider from "./initialization/HttpsSecurityOptionsProvider.js";
 import AppConfigProvider from "./initialization/AppConfigProvider.js";
 import ejs from "ejs";
@@ -26,21 +26,22 @@ app.engine("html", ejs.renderFile);
 
 global.appConfig = AppConfigProvider.getConfig();
 
-app.get("/", (req, res) => EndpointPipelineContainer.renderHtmlFile(res, "home.html"));
-app.get("/login", (req, res) => EndpointPipelineContainer.renderHtmlFile(res, "login.html", { errorModalDisplayMode: "none" }));
-app.get("/register", (req, res) => EndpointPipelineContainer.renderHtmlFile(res, "register.html", global.appConfig));
-app.get("/error", (req, res) => EndpointPipelineContainer.renderHtmlFile(res, "error.html"));
-app.get("/todos", (req, res) => EndpointPipelineContainer.renderHtmlFile(res, "todos.html"));
+app.get("/", (req, res) => Endpoints.renderPage(res, "home.html"));
+app.get("/login", (req, res) => Endpoints.renderPage(res, "login.html", { errorModalDisplayMode: "none" }));
+app.get("/register", (req, res) => Endpoints.renderPage(res, "register.html", global.appConfig));
+app.get("/todos", async (req, res) => await Endpoints.todos(req, res));
 
-app.get("/authorized-user-name", async (req, res) => await EndpointPipelineContainer.authorizedUserName(req, res));
+app.get("/error", (req, res) => Endpoints.renderPage(res, "error.html"));
+app.get("/unauthorized", (req, res) => Endpoints.renderPage(res, "unauthorized.html"));
+app.get("/authorized-user-name", async (req, res) => await Endpoints.authorizedUserName(req, res));
 
-app.post("/login", async (req, res) => await EndpointPipelineContainer.login(req, res));
-app.post("/register", async (req, res) => await EndpointPipelineContainer.register(req, res));
-app.post("/add-todo", async (req, res) => await EndpointPipelineContainer.addToDo(req, res));
-app.post("/delete-todo/:todoTitle", async (req, res) => await EndpointPipelineContainer.deleteToDo(req, res));
-app.post("/edit-todo/:todoTitle", async (req, res) => await EndpointPipelineContainer.editToDo(req, res));
-
-app.post("/edit-settings", async (req, res) => await EndpointPipelineContainer.editSettings(req, res));
+app.post("/register", async (req, res) => await Endpoints.register(req, res));
+app.post("/login", async (req, res) => await Endpoints.login(req, res));
+app.post("/logout", async (req, res) => await Endpoints.logout(req, res));
+app.post("/add-todo", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.addToDo));
+app.post("/delete-todo/:todoTitle", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.deleteToDo));
+app.post("/edit-todo/:todoTitle", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.editToDo));
+app.post("/edit-settings", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.editSettings));
 
 // TODO: refactor it all below
 if (process.env.MPT_APP_PROTOCOL === "https" && process.env.NODE_ENV === "Development")
