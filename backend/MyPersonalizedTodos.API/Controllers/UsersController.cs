@@ -76,12 +76,20 @@ namespace MyPersonalizedTodos.API.Controllers
 
         [AdminAuthorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] int id)
+        public async Task<IActionResult> DeleteUserAndRelatedData([FromRoute] int id)
         {
-            var userToDelete = await _context.Users.FirstAsync(u => u.Id == id);
+            var userToDelete = await _context.Users.Include(u => u.ToDos).Include(u => u.Settings).FirstAsync(u => u.Id == id);
             if (userToDelete is null)
                 return NotFound();
 
+            // TODO: Logout deleting user even if it is not logged user.
+            var loggedUser = await _authorizedUserProvider.GetAuthUser();
+            if (loggedUser.Id == userToDelete.Id)
+                _tokensService.DeleteCookieWithToken();
+
+            // TODO: Configure user cascade deleting in database.
+            _context.UsersSettings.Remove(userToDelete.Settings);
+            _context.ToDos.RemoveRange(userToDelete.ToDos);
             _context.Users.Remove(userToDelete);
             await _context.SaveChangesAsync();
 
@@ -118,7 +126,7 @@ namespace MyPersonalizedTodos.API.Controllers
             var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
 
             var toDo = user.ToDos.FirstOrDefault(t => t.Title == todoTitle);
-            await _usersToDosService.DeleteToDo(user, toDo);
+            await _usersToDosService.DeleteToDo(toDo);
 
             return Ok();
         }

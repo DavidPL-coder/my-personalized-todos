@@ -7,7 +7,7 @@ namespace MyPersonalizedTodos.API.Services
     public interface IUsersToDosService
     {
         Task AddToDo(User user, ToDo toDo);
-        Task DeleteToDo(User user, ToDo toDo);
+        Task DeleteToDo(ToDo toDo);
         Task UpdateToDo(User user, int toDoIndex, ToDo toDo);
     }
 
@@ -26,9 +26,9 @@ namespace MyPersonalizedTodos.API.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteToDo(User user, ToDo toDo) 
+        public async Task DeleteToDo(ToDo toDo) 
         {
-            user.ToDos.Remove(toDo);
+            _context.ToDos.Remove(toDo);
             await _context.SaveChangesAsync();
         }
 
