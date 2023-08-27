@@ -30,6 +30,7 @@ public class AppDbContext : DbContext
                 value => JsonSerializer.Deserialize<List<Purpose>>(value, (JsonSerializerOptions)null)
                 );
 
+        // TODO: Set todo as unique by title per user.
         modelBuilder.Entity<ToDo>().Property(todo => todo.Title).IsRequired();
 
         modelBuilder.Entity<UserSettings>().Property(settings => settings.TextColor).IsRequired();
@@ -37,5 +38,16 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<UserSettings>().Property(settings => settings.HeaderColor).IsRequired();
 
         modelBuilder.Entity<Role>().HasIndex(role => role.UserRole).IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.ToDos)
+            .WithOne(t => t.User)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Settings)
+            .WithOne(s => s.User)
+            .HasForeignKey<UserSettings>(s => s.UserId)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

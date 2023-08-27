@@ -12,6 +12,8 @@ namespace MyPersonalizedTodos.API.Database.Entities
         public string BackgroundColor { get; init; }
         public string HeaderColor { get; init; }
         public FontSize FontSize { get; init; }
+        public int UserId { get; init; }
+        public User User { get; init; }
 
         public UserSettings()
         {

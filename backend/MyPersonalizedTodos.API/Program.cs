@@ -16,6 +16,7 @@ using MyPersonalizedTodos.API.Initialization;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 
 // TODO: The file is too big. Move some code to another files.
 // TODO: write unit tests.
@@ -25,7 +26,6 @@ var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<AppConfig>();
 
 builder.Services.AddSingleton(appConfig);
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddFluentValidationAutoValidation();
@@ -34,6 +34,8 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<DbSeeder>();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles); // it is added for disable object cycles error. 
 
 var isCorsPolicyEnable = !string.IsNullOrWhiteSpace(appConfig.MPT_CORS_POLICY_NAME) && !string.IsNullOrWhiteSpace(appConfig.MPT_CORS_ALLOWED_URL);
 if (isCorsPolicyEnable)

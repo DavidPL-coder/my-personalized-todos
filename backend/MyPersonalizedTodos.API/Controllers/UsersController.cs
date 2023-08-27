@@ -87,9 +87,6 @@ namespace MyPersonalizedTodos.API.Controllers
             if (loggedUser.Id == userToDelete.Id)
                 _tokensService.DeleteCookieWithToken();
 
-            // TODO: Configure user cascade deleting in database.
-            _context.UsersSettings.Remove(userToDelete.Settings);
-            _context.ToDos.RemoveRange(userToDelete.ToDos);
             _context.Users.Remove(userToDelete);
             await _context.SaveChangesAsync();
 
@@ -162,7 +159,7 @@ namespace MyPersonalizedTodos.API.Controllers
         [HttpPut("{username}/Settings")]
         public async Task<IActionResult> UpdateSettings([FromRoute] string username, [FromBody] UpdateUserSettingsDto dto)
         {
-            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
+            var user = await _context.Users.Include(u => u.Settings).FirstAsync(u => u.Name == username);
             var settings = _mapper.Map<UserSettings>(dto);
             settings.Id = user.Settings.Id;
 
