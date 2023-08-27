@@ -23,7 +23,10 @@ export default class RequestSender {
 
     static async tryToGetAuthorizedUserName(req, res) {
         const response = await RequestSender.get(`${process.env.MPT_BACKEND_URL_FOR_NODE}/api/account/username`, req, res);
-        return [response?.data?.name, response?.status ?? 500]; // TODO: Is it a good idea to set 500 code as default?
+        return {
+            username: response?.data?.name, 
+            statusCode: response?.status ?? 500 // TODO: Is it a good idea to set 500 code as default?
+        }; 
     }
 
     static async #sendRequest(requestFunc, cookieToSend, res) {
@@ -37,6 +40,7 @@ export default class RequestSender {
         }
         catch (error) {
             if (error.response) {
+                console.log("Error was catch while request sending to backend.");
                 console.log("Server message:", error.response.data);
                 console.log("Status code:", error.response.status);
                 console.log("Data from request body:", error.response.config.data);

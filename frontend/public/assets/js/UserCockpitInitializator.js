@@ -4,8 +4,6 @@ import { getAppConfig } from "./AppConfig.js";
 
 class UserCockpitInitializator {
     #cancelTextContent;
-    #errorSiteURL;
-    #unauthorizedSiteURL;
     #authUserNameUrl;
     #siteTitle;
     #noTodosInfo;
@@ -27,12 +25,10 @@ class UserCockpitInitializator {
         const config = getAppConfig();
 
         this.#cancelTextContent = "Anuluj";
-        this.#errorSiteURL = `${config.FRONTEND_URL}/error`;
-        this.#unauthorizedSiteURL = `${config.FRONTEND_URL}/unauthorized`;
         this.#authUserNameUrl = `${config.FRONTEND_URL}/authorized-user-name`;
         this.#siteTitle = username => "Lista user'a " + username;
         this.#noTodosInfo = "Brak zadań.";
-        this.#getTodosUrl = username => `${config.BACKEND_URL}/api/users/${username}/todos`;
+        this.#getTodosUrl = `${config.FRONTEND_URL}/authorized-user-todos`;
         this.#modalTitleInUpdateMode = "Edycja Twojego ToDo";
         this.#modalTitleInAddMode = "Dodawanie Nowego ToDo";
         this.#deleteTodoUrl = todoTitle => `${config.FRONTEND_URL}/delete-todo/${todoTitle}`;
@@ -43,7 +39,7 @@ class UserCockpitInitializator {
         this.#todoForm = document.querySelector("#todo-form");
         this.#panelRemoveBtn = document.querySelector("#panel-remove-button");
         this.#settingsFormAction = `${config.FRONTEND_URL}/edit-settings`;
-        this.#getSettingsUrl = username => `${config.BACKEND_URL}/api/users/${username}/settings`;
+        this.#getSettingsUrl = `${config.FRONTEND_URL}/authorized-user-settings`;
         this.#settingsColorInputsWithDefaults = [
             { input: document.querySelector("#text-color-input"), defaultValue: "#ffffff" },
             { input: document.querySelector("#background-color-input"), defaultValue: "#222930"},
@@ -52,8 +48,7 @@ class UserCockpitInitializator {
     }
 
     async init() {
-        await this.#setUsernameInStorage();
-        this.#setSiteTitle();
+        await this.#setSiteTitle();
         await this.#loadToDos();
         this.#setEventForModalCloseButton();
         this.#enableAutoResizeForModalDescriptionInput();
@@ -67,14 +62,9 @@ class UserCockpitInitializator {
         await this.#loadSettingsOnSite();
     }
 
-    async #setUsernameInStorage() {
+    async #setSiteTitle() {
         const response = await fetch(this.#authUserNameUrl);
         const username = await response.text();
-        sessionStorage.setItem("username", username);
-    }
-
-    #setSiteTitle() {
-        const username = sessionStorage.getItem("username");
         document.querySelector("#site-title").textContent = this.#siteTitle(username);
     }
 
@@ -202,8 +192,7 @@ class UserCockpitInitializator {
 
     async #loadSettingsOnSite() {
         // TODO: refactor it.
-        const username = sessionStorage.getItem("username");
-        const response = await fetch(this.#getSettingsUrl(username));
+        const response = await fetch(this.#getSettingsUrl);
         const settings = await response.json();
 
         const titles = document.querySelectorAll(".todo-title");
@@ -238,8 +227,7 @@ class UserCockpitInitializator {
     }
 
     async #getToDosData() {
-        const username = sessionStorage.getItem("username");
-        const response = await fetch(this.#getTodosUrl(username));
+        const response = await fetch(this.#getTodosUrl);
         return await response.json();
     }
 

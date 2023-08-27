@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; init; }
     public DbSet<ToDo> ToDos { get; init; }
     public DbSet<UserSettings> UsersSettings { get; init; }
+    public DbSet<Role> Roles { get; init; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -34,5 +35,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<UserSettings>().Property(settings => settings.TextColor).IsRequired();
         modelBuilder.Entity<UserSettings>().Property(settings => settings.BackgroundColor).IsRequired();
         modelBuilder.Entity<UserSettings>().Property(settings => settings.HeaderColor).IsRequired();
+
+        modelBuilder.Entity<Role>().HasIndex(role => role.UserRole).IsUnique();
     }
 }

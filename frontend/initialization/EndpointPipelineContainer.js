@@ -14,7 +14,7 @@ export default class EndpointPipelineContainer {
     };
 
     static async todos(req, res) {
-        const [_, statusCode] = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        const { statusCode } = await RequestSender.tryToGetAuthorizedUserName(req, res);
 
         if (statusCode === 200)
             this.renderPage(res, "todos.html");
@@ -22,6 +22,11 @@ export default class EndpointPipelineContainer {
             res.redirect("/unauthorized");
         else
             res.redirect("/error");
+    }
+
+    static async checkIfUserExist(req, res) {
+        const response = await RequestSender.get(`${this.SERVER_URL}/api/account/exist-state/${req.params.username}`, req, res);
+        res.status(response?.status ?? 500).send(response?.data);
     }
 
     static async register(req, res) {
@@ -50,7 +55,7 @@ export default class EndpointPipelineContainer {
     }
 
     static async logout(req, res) {
-        const [_, statusCode] = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        const { statusCode } = await RequestSender.tryToGetAuthorizedUserName(req, res);
         if (statusCode === 401)
             return;
 
@@ -60,7 +65,7 @@ export default class EndpointPipelineContainer {
     }
 
     static async InvokeWithAuthorization(req, res, endpointFunc) {
-        const [username, statusCode] = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        const { username, statusCode } = await RequestSender.tryToGetAuthorizedUserName(req, res);
         if (statusCode === 401) {
             res.redirect("/unauthorized");
             return;
@@ -86,8 +91,30 @@ export default class EndpointPipelineContainer {
     }
 
     static async authorizedUserName(req, res) {
-        const [username, statusCode] = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        const { username, statusCode } = await RequestSender.tryToGetAuthorizedUserName(req, res);
         res.status(statusCode).send(username);
+    }
+
+    static async authorizedUserTodos(req, res) {
+        const { username, statusCode } = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        if (statusCode === 401) {
+            res.redirect("/unauthorized");
+            return;
+        }
+
+        const response = await RequestSender.get(`${this.SERVER_URL}/api/users/${username}/todos`, req, res);
+        res.send(response.data);
+    }
+
+    static async authorizedUserSettings(req, res) {
+        const { username, statusCode }  = await RequestSender.tryToGetAuthorizedUserName(req, res);
+        if (statusCode === 401) {
+            res.redirect("/unauthorized");
+            return;
+        }
+
+        const response = await RequestSender.get(`${this.SERVER_URL}/api/users/${username}/settings`, req, res);
+        res.send(response.data);
     }
 
     static async editSettings(req, res, username) {
@@ -109,6 +136,7 @@ export default class EndpointPipelineContainer {
     }
 
     static #parseTodoData(data) {
+        // TODO: Send null when description is empty
         data.description = data.description.trim();
 
         for (const key in data) {

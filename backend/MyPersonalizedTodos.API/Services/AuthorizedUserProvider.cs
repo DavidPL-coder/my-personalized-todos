@@ -21,10 +21,11 @@ namespace MyPersonalizedTodos.API.Services
             _dbContext = dbContext;
         }
 
+        // TODO: Let select related data to load.
         public async Task<User> GetAuthUser(bool mustIncludeRelatedData = true)
         {
             IQueryable<User> users = mustIncludeRelatedData 
-                ? _dbContext.Users.Include(u => u.ToDos).Include(u => u.Settings)
+                ? _dbContext.Users.Include(u => u.ToDos).Include(u => u.Settings).Include(u => u.Role)
                 : _dbContext.Users;
 
             var id = int.Parse(_contextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));

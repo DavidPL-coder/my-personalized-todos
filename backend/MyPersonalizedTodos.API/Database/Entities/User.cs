@@ -16,4 +16,6 @@ public class User
     public string Description { get; set; }
     public List<ToDo> ToDos { get; set; }
     public UserSettings Settings { get; set; }
+    public Role Role { get; set; }
+    public bool IsAdmin() => Role.UserRole == UserRole.Admin;
 }

@@ -14,17 +14,7 @@ namespace MyPersonalizedTodos.API.DTOs.Mappers
                 .ForMember(user => user.Gender, configExpression => configExpression.MapFrom(dto => dto.Gender.ConvertToEnum<UserGender>()))
                 .ForMember(user => user.Purposes, configExpression => configExpression.MapFrom(dto => dto.Purposes.Select(x => x.ConvertToEnum<Purpose>()).ToList()))
                 .ForMember(user => user.Nationality, configExpression => configExpression.MapFrom(dto => dto.Nationality.ConvertToEnum<UserNationality>()))
-                .ForMember(user => user.Settings, configExpression => configExpression.MapFrom(dto => 
-                    new UserSettings // TODO: Take it from config
-                    { 
-                        Italic = false,
-                        Bold = false,
-                        Uppercase = false,
-                        TextColor = "#ffffff",
-                        BackgroundColor = "#222930", 
-                        HeaderColor = "#3199e3",
-                        FontSize = FontSize.Small
-                    }));
+                .ForMember(user => user.Settings, configExpression => configExpression.MapFrom(_ => new UserSettings()));
         }
     }
 }

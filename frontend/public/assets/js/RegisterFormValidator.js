@@ -12,7 +12,7 @@ class RegisterFormValidator {
     #funCheckbox;
     #otherCheckbox;
     #formActionValue;
-    #serverURL;
+    #checkUserExistingUrl;
     #errorSiteURL;
 
     constructor() {
@@ -27,7 +27,7 @@ class RegisterFormValidator {
         this.#funCheckbox = document.querySelector("#fun-checkbox");
         this.#otherCheckbox = document.querySelector("#other-checkbox");
         this.#formActionValue = `${config.FRONTEND_URL}/register`;
-        this.#serverURL = config.BACKEND_URL;
+        this.#checkUserExistingUrl = username => `${config.FRONTEND_URL}/check-user-existing/${username}`;
         this.#errorSiteURL = `${config.FRONTEND_URL}/error`;
     }
 
@@ -122,7 +122,7 @@ class RegisterFormValidator {
     async #isUserWithGivenLoginExist() {
         try {
             const loginInputValue = document.querySelector("#login-input").value;
-            const response = await fetch(`${this.#serverURL}/api/users/${loginInputValue}`);
+            const response = await fetch(this.#checkUserExistingUrl(loginInputValue));
             return response.status;
         } 
         catch (error) {

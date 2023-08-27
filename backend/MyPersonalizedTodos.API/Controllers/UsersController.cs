@@ -4,15 +4,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyPersonalizedTodos.API.Authorization;
 using MyPersonalizedTodos.API.Database;
 using MyPersonalizedTodos.API.Database.Entities;
 using MyPersonalizedTodos.API.DTOs;
+using MyPersonalizedTodos.API.Enums;
 using MyPersonalizedTodos.API.Services;
 using System.Security.Claims;
 
 namespace MyPersonalizedTodos.API.Controllers
 {
-    // TODO: Add authorization
+    [Authorize]
     public class UsersController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -20,43 +22,51 @@ namespace MyPersonalizedTodos.API.Controllers
         private readonly AppDbContext _context;
         private readonly IAuthorizedUserProvider _authorizedUserProvider;
         private readonly IUsersToDosService _usersToDosService;
+        private readonly ITokensService _tokensService;
 
-        public UsersController(IMapper mapper, IPasswordHasher<User> passwordHasher, AppDbContext context, IAuthorizedUserProvider authorizedUserProvider, IUsersToDosService usersToDosService)
+        public UsersController(IMapper mapper, IPasswordHasher<User> passwordHasher, AppDbContext context, IAuthorizedUserProvider authorizedUserProvider, IUsersToDosService usersToDosService, ITokensService tokensService)
         {
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _context = context;
             _authorizedUserProvider = authorizedUserProvider;
             _usersToDosService = usersToDosService;
+            _tokensService = tokensService;
         }
 
-        // [Authorize]
+        [AdminAuthorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _context.Users.Include(u => u.ToDos).Include(u => u.Settings).ToListAsync());
+        {   
+            var users = await _context.Users.AsNoTracking().ToListAsync();
+            return Ok(users);
         }
 
-        [HttpGet("{nameOrId}")]
-        public async Task<IActionResult> GetByNameOrId([FromRoute] string nameOrId)
+        [ResourceOwnerOrAdminAuhorize]
+        [HttpGet("{usernameOrId}")]
+        public async Task<IActionResult> GetByNameOrId([FromRoute] string usernameOrId)
         {
-            var user = int.TryParse(nameOrId, out int id) 
-                ? await _context.Users.FindAsync(id) 
-                : await _context.Users.FirstOrDefaultAsync(user => user.Name == nameOrId);
+            var getUsersQuery = _context.Users.AsNoTracking()
+                .Include(u => u.ToDos)
+                .Include(u => u.Settings)
+                .Include(u => u.Role);
 
-            if (user == null)
-                return NotFound();
+            var user = int.TryParse(usernameOrId, out int id) 
+                ? await getUsersQuery.FirstAsync(user => user.Id == id) 
+                : await getUsersQuery.FirstAsync(user => user.Name == usernameOrId);
 
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RegisterUserDTO dto)
+        public async Task<IActionResult> CreateUser([FromBody] RegisterUserDTO dto)
         {
             var user = _mapper.Map<User>(dto);
-
             var passwordHash = _passwordHasher.HashPassword(user, dto.Password);
             user.PasswordHash = passwordHash;
+            var userRole = await _context.Roles.FirstAsync(role => role.UserRole == UserRole.User);
+            user.Role = userRole;
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -64,12 +74,12 @@ namespace MyPersonalizedTodos.API.Controllers
             return Ok();
         }
 
-        // [Authorize]
+        [AdminAuthorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            var userToDelete = await _context.Users.FindAsync(id);
-            if (userToDelete == null)
+            var userToDelete = await _context.Users.FirstAsync(u => u.Id == id);
+            if (userToDelete is null)
                 return NotFound();
 
             _context.Users.Remove(userToDelete);
@@ -80,22 +90,20 @@ namespace MyPersonalizedTodos.API.Controllers
 
         /// ToDos actions:
 
-        // [Authorize]
-        [HttpGet("{name}/ToDos")]
-        public async Task<IActionResult> GetToDos([FromRoute] string name)
+        [ResourceOwnerOrAdminAuhorize]
+        [HttpGet("{username}/ToDos")]
+        public async Task<IActionResult> GetToDos([FromRoute] string username)
         {
-            var user = await _context.Users.Include(u => u.ToDos).FirstOrDefaultAsync(u => u.Name == name);
+            var user = await _context.Users.AsNoTracking().Include(u => u.ToDos).FirstAsync(u => u.Name == username);
             return Ok(user.ToDos);
         }
 
         // TODO: Add validation of body data.
-        [Authorize]
+        [ResourceOwnerOrAdminAuhorize]
         [HttpPost("{username}/ToDos")]
         public async Task<IActionResult> CreateToDo([FromRoute] string username, [FromBody] CreateToDoDTO dto)
         {
-            var user = await _authorizedUserProvider.GetAuthUser();
-            if (user.Name != username)
-                return Forbid();
+            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
 
             var toDo = _mapper.Map<ToDo>(dto);
             await _usersToDosService.AddToDo(user, toDo);
@@ -103,13 +111,11 @@ namespace MyPersonalizedTodos.API.Controllers
             return Ok();
         }
 
-        [Authorize]
+        [ResourceOwnerOrAdminAuhorize]
         [HttpDelete("{username}/ToDos/{todoTitle}")]
         public async Task<IActionResult> DeleteToDo([FromRoute] string username, [FromRoute] string todoTitle)
         {
-            var user = await _authorizedUserProvider.GetAuthUser();
-            if (user.Name != username)
-                return Forbid();
+            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
 
             var toDo = user.ToDos.FirstOrDefault(t => t.Title == todoTitle);
             await _usersToDosService.DeleteToDo(user, toDo);
@@ -117,13 +123,11 @@ namespace MyPersonalizedTodos.API.Controllers
             return Ok();
         }
 
-        [Authorize]
+        [ResourceOwnerOrAdminAuhorize]
         [HttpPut("{username}/ToDos/{todoTitle}")]
         public async Task<IActionResult> UpdateToDo([FromRoute] string username, [FromRoute] string todoTitle, [FromBody] UpdateToDoDto dto)
         {
-            var user = await _authorizedUserProvider.GetAuthUser();
-            if (user.Name != username)
-                return Forbid();
+            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
 
             var toDoIndex = user.ToDos.FindIndex(t => t.Title == todoTitle);
             if (toDoIndex == -1)
@@ -138,21 +142,19 @@ namespace MyPersonalizedTodos.API.Controllers
 
         /// Settings actions:
 
+        [ResourceOwnerOrAdminAuhorize]
         [HttpGet("{username}/Settings")]
         public async Task<IActionResult> GetSettings([FromRoute] string username)
         {
-            var user = await _context.Users.Include(u => u.Settings).FirstOrDefaultAsync(u => u.Name == username);
+            var user = await _context.Users.AsNoTracking().Include(u => u.Settings).FirstAsync(u => u.Name == username);
             return Ok(user.Settings);
         }
 
-        [Authorize]
+        [ResourceOwnerOrAdminAuhorize]
         [HttpPut("{username}/Settings")]
         public async Task<IActionResult> UpdateSettings([FromRoute] string username, [FromBody] UpdateUserSettingsDto dto)
         {
-            var user = await _authorizedUserProvider.GetAuthUser();
-            if (user.Name != username)
-                return Forbid();
-
+            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
             var settings = _mapper.Map<UserSettings>(dto);
             settings.Id = user.Settings.Id;
 

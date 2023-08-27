@@ -4,6 +4,8 @@ namespace MyPersonalizedTodos.API
     public class AppConfig
     {
         public string ASPNETCORE_ENVIRONMENT { get; init; }
+        public string MPT_BACKEND_URL { get; init; }
+        public string MPT_APP_DOMAIN_NAME { get; init; }
         public string MPT_CORS_POLICY_NAME { get; init; }
         public string MPT_CORS_ALLOWED_URL { get; init; }
         public string MPT_APP_PROTOCOL { get; init; }
@@ -12,6 +14,8 @@ namespace MyPersonalizedTodos.API
         public string MPT_DATABASE_NAME { get; init; }
         public int MPT_DB_CONNECTION_LIMIT { get; init; }
         public int MPT_DB_CONNECTION_WAITING_TIME { get; init; }
+        public string MPT_ADMIN_LOGIN { get; init; }
+        public string MPT_ADMIN_PASSWORD { get; init; }
         public string MPT_JWT_ISSUER { get; init; }
         public string MPT_JWT_AUDIENCE { get; init; }
         public string MPT_JWT_KEY { get; init; }

@@ -33,7 +33,11 @@ app.get("/todos", async (req, res) => await Endpoints.todos(req, res));
 
 app.get("/error", (req, res) => Endpoints.renderPage(res, "error.html"));
 app.get("/unauthorized", (req, res) => Endpoints.renderPage(res, "unauthorized.html"));
+
+app.get("/check-user-existing/:username", async (req, res) => await Endpoints.checkIfUserExist(req, res));
 app.get("/authorized-user-name", async (req, res) => await Endpoints.authorizedUserName(req, res));
+app.get("/authorized-user-todos", async (req, res) => await Endpoints.authorizedUserTodos(req, res));
+app.get("/authorized-user-settings", async (req, res) => await Endpoints.authorizedUserSettings(req, res));
 
 app.post("/register", async (req, res) => await Endpoints.register(req, res));
 app.post("/login", async (req, res) => await Endpoints.login(req, res));

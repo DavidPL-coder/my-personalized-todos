@@ -1,15 +1,20 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MyPersonalizedTodos.API;
+using MyPersonalizedTodos.API.Authorization;
 using MyPersonalizedTodos.API.Database;
 using MyPersonalizedTodos.API.Database.Entities;
+using MyPersonalizedTodos.API.Extensions;
 using MyPersonalizedTodos.API.Initialization;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 
 // TODO: The file is too big. Move some code to another files.
@@ -17,7 +22,9 @@ using System.Text;
 // TODO: Configure JsonConverter
 
 var builder = WebApplication.CreateBuilder(args);
+var appConfig = builder.Configuration.Get<AppConfig>();
 
+builder.Services.AddSingleton(appConfig);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -26,15 +33,17 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<DbSeeder>();
 
-var appConfig = builder.Configuration.Get<AppConfig>();
-builder.Services.AddSingleton(appConfig);
-
-builder.Services.AddCors(options =>
+var isCorsPolicyEnable = !string.IsNullOrWhiteSpace(appConfig.MPT_CORS_POLICY_NAME) && !string.IsNullOrWhiteSpace(appConfig.MPT_CORS_ALLOWED_URL);
+if (isCorsPolicyEnable)
 {
-    options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL)
-        .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-});
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(appConfig.MPT_CORS_POLICY_NAME, policyBuilder => policyBuilder.WithOrigins(appConfig.MPT_CORS_ALLOWED_URL)
+            .AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+    });
+}
 
 builder.Services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(appConfig.MPT_CONNECTION_STRING));
 
@@ -73,12 +82,15 @@ builder.Services.Scan(scan => scan.FromCallingAssembly().AddClasses(publicOnly: 
     .WithScopedLifetime());
 
 var app = builder.Build();
+using var serviceScope = app.Services.CreateScope();
 
-if (!DbMigrator.TryToMigrate(app))
+if (!DbMigrator.TryToMigrate(app, serviceScope))
 {
     app.Logger.LogCritical("The limit waiting for connection ({ConnectionLimit}s) has been passed. Can't connect to db.", appConfig.MPT_DB_CONNECTION_LIMIT/1000);
     return;
 }
+
+serviceScope.Get<DbSeeder>().Seed();
 
 if (app.Environment.IsDevelopment())
 {
@@ -86,7 +98,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(appConfig.MPT_CORS_POLICY_NAME);
+if (isCorsPolicyEnable)
+{
+    app.Logger.LogInformation("# The CORS Policy '{policyName}' is enabled.", appConfig.MPT_CORS_POLICY_NAME);
+    app.UseCors(appConfig.MPT_CORS_POLICY_NAME);
+}
 
 app.UseAuthentication();
 
