@@ -20,7 +20,7 @@ namespace MyPersonalizedTodos.API.Authorization
 
             var dbContext = context.HttpContext.RequestServices.GetService<AppDbContext>();
             var loggedUser = await dbContext.Users.Include(u => u.Role).FirstAsync(user => user.Id.ToString() == loggedUserId);
-            if (!loggedUser.IsAdmin()) 
+            if (!loggedUser.IsAdmin) 
             {
                 context.Result = new ForbidResult();
                 var appLogger = context.HttpContext.RequestServices.GetService<ILogger<AdminAuthorizeAttribute>>();

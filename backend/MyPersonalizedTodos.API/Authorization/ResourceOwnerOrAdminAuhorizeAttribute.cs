@@ -31,7 +31,7 @@ namespace MyPersonalizedTodos.API.Authorization
 
             var ownerId = userWithGivenUsername.Id.ToString();
             var loggedUser = await dbContext.Users.Include(u => u.Role).FirstAsync(user => user.Id.ToString() == loggedUserId);
-            if (loggedUserId != ownerId && !loggedUser.IsAdmin())
+            if (loggedUserId != ownerId && !loggedUser.IsAdmin)
             {
                 context.Result = new ForbidResult();
                 var appLogger = context.HttpContext.RequestServices.GetService<ILogger<ResourceOwnerOrAdminAuhorizeAttribute>>();
