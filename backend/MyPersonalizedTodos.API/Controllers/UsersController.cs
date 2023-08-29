@@ -63,10 +63,8 @@ namespace MyPersonalizedTodos.API.Controllers
         public async Task<IActionResult> CreateUser([FromBody] RegisterUserDTO dto)
         {
             var user = _mapper.Map<User>(dto);
-            var passwordHash = _passwordHasher.HashPassword(user, dto.Password);
-            user.PasswordHash = passwordHash;
-            var userRole = await _context.Roles.FirstAsync(role => role.UserRole == UserRole.User);
-            user.Role = userRole;
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
+            user.Role = await _context.Roles.FirstAsync(role => role.UserRole == UserRole.User);
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -76,9 +74,9 @@ namespace MyPersonalizedTodos.API.Controllers
 
         [AdminAuthorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserAndRelatedData([FromRoute] int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            var userToDelete = await _context.Users.Include(u => u.ToDos).Include(u => u.Settings).FirstAsync(u => u.Id == id);
+            var userToDelete = await _context.Users.FirstAsync(u => u.Id == id);
             if (userToDelete is null)
                 return NotFound();
 
@@ -99,8 +97,11 @@ namespace MyPersonalizedTodos.API.Controllers
         [HttpGet("{username}/ToDos")]
         public async Task<IActionResult> GetToDos([FromRoute] string username)
         {
-            var user = await _context.Users.AsNoTracking().Include(u => u.ToDos).FirstAsync(u => u.Name == username);
-            return Ok(user.ToDos);
+            var toDos = await _context.ToDos.AsNoTracking().Include(todo => todo.User)
+                .Where(todo => todo.User.Name == username)
+                .ToListAsync();
+
+            return Ok(toDos);
         }
 
         // TODO: Add validation of body data.
@@ -108,11 +109,12 @@ namespace MyPersonalizedTodos.API.Controllers
         [HttpPost("{username}/ToDos")]
         public async Task<IActionResult> CreateToDo([FromRoute] string username, [FromBody] CreateToDoDTO dto)
         {
-            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
-
             var toDo = _mapper.Map<ToDo>(dto);
-            await _usersToDosService.AddToDo(user, toDo);
+            var user = await _context.Users
+                .Include(u => u.ToDos)
+                .FirstAsync(u => u.Name == username);
 
+            await _usersToDosService.AddToDo(user, toDo);
             return Ok();
         }
 
@@ -120,14 +122,14 @@ namespace MyPersonalizedTodos.API.Controllers
         [HttpDelete("{username}/ToDos/{todoTitle}")]
         public async Task<IActionResult> DeleteToDo([FromRoute] string username, [FromRoute] string todoTitle)
         {
-            var user = await _context.Users.Include(u => u.ToDos).FirstAsync(u => u.Name == username);
+            var toDo = await _context.ToDos.Include(t => t.User)
+                .FirstAsync(t => t.Title == todoTitle && t.User.Name == username);
 
-            var toDo = user.ToDos.FirstOrDefault(t => t.Title == todoTitle);
             await _usersToDosService.DeleteToDo(toDo);
-
             return Ok();
         }
 
+        // TODO: Refactor it.
         [ResourceOwnerOrAdminAuhorize]
         [HttpPut("{username}/ToDos/{todoTitle}")]
         public async Task<IActionResult> UpdateToDo([FromRoute] string username, [FromRoute] string todoTitle, [FromBody] UpdateToDoDto dto)
@@ -139,7 +141,7 @@ namespace MyPersonalizedTodos.API.Controllers
                 return NotFound();
 
             var toDo = _mapper.Map<ToDo>(dto);
-            toDo.Id = user.ToDos.First(t => t.Title == todoTitle).Id;
+            toDo.Id = user.ToDos[toDoIndex].Id;
             await _usersToDosService.UpdateToDo(user, toDoIndex, toDo);
 
             return Ok();
@@ -151,10 +153,13 @@ namespace MyPersonalizedTodos.API.Controllers
         [HttpGet("{username}/Settings")]
         public async Task<IActionResult> GetSettings([FromRoute] string username)
         {
-            var user = await _context.Users.AsNoTracking().Include(u => u.Settings).FirstAsync(u => u.Name == username);
-            return Ok(user.Settings);
+            var settings = await _context.UsersSettings.AsNoTracking().Include(s => s.User)
+                .FirstAsync(s => s.User.Name == username);
+
+            return Ok(settings);
         }
 
+        // TODO: Refactor it.
         [ResourceOwnerOrAdminAuhorize]
         [HttpPut("{username}/Settings")]
         public async Task<IActionResult> UpdateSettings([FromRoute] string username, [FromBody] UpdateUserSettingsDto dto)

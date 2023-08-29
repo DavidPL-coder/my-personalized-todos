@@ -22,6 +22,7 @@ namespace MyPersonalizedTodos.API.Services
         }
 
         // TODO: Let select related data to load.
+        // TODO: Check if user is logged.
         public async Task<User> GetAuthUser(bool mustIncludeRelatedData = true)
         {
             IQueryable<User> users = mustIncludeRelatedData 

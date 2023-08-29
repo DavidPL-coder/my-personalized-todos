@@ -37,6 +37,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<UserSettings>().Property(settings => settings.BackgroundColor).IsRequired();
         modelBuilder.Entity<UserSettings>().Property(settings => settings.HeaderColor).IsRequired();
 
+        // TODO: Set RoleId in User table as non-nullable and unique.
         modelBuilder.Entity<Role>().HasIndex(role => role.UserRole).IsUnique();
 
         modelBuilder.Entity<User>()

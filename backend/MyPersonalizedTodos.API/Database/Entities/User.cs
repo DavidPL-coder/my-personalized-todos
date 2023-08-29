@@ -17,5 +17,5 @@ public class User
     public List<ToDo> ToDos { get; set; }
     public UserSettings Settings { get; set; }
     public Role Role { get; set; }
-    public bool IsAdmin() => Role.UserRole == UserRole.Admin;
+    public bool IsAdmin() => Role.UserRole == UserRole.Admin; // TODO: convert it into readonly property
 }
