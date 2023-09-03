@@ -20,6 +20,7 @@ class UserCockpitInitializator {
     #settingsFormAction;
     #getSettingsUrl;
     #settingsColorInputsWithDefaults;
+    #resizeDescriptionInput;
 
     constructor() {
         const config = getAppConfig();
@@ -92,18 +93,24 @@ class UserCockpitInitializator {
     }
 
     #enableAutoResizeForModalDescriptionInput() {
+        // TODO: initializing resizeDescriptionInput in constructor would be rather a better idea instead of initializing this here.
         const descriptionInput = document.querySelector("#description-input");
         const defaultHeight = getComputedStyle(descriptionInput).height.slice(0, -2) - 2; // 2 is border width (top + bottom)
 
-        descriptionInput.addEventListener("input", () => {
+        this.#resizeDescriptionInput = () => {
             descriptionInput.style.height = "auto";
-            descriptionInput.style.height = (descriptionInput.scrollHeight > defaultHeight ? descriptionInput.scrollHeight : defaultHeight) + "px";
-        });
+            descriptionInput.style.height = Math.max(descriptionInput.scrollHeight, defaultHeight) + "px";
+        };
+
+        descriptionInput.addEventListener("input", this.#resizeDescriptionInput);
     }
 
     #setEventForAddButton() {
         const addButton = document.querySelector("#panel-add-button");
-        addButton.addEventListener("click", () => this.#initTodoModalObjects(false));
+        addButton.addEventListener("click", () => {
+            this.#initTodoModalObjects(false);
+            this.#resizeDescriptionInput();
+        });
     }
 
     #setEventForClickOnTodo() {
@@ -114,12 +121,13 @@ class UserCockpitInitializator {
                 if (this.#panelRemoveBtn.textContent == this.#cancelTextContent)
                     return;
 
-                const todoTitle = todoCard.querySelector(".todo-title").textContent;
-                const DataOftodos = await this.#getToDosData();
-                const todoData = DataOftodos.find(t => t.title == todoTitle);
+                const todoTitle = todoCard.querySelector(".todo-title").dataset.realTitle;
+                const DataOfTodos = await this.#getToDosData();
+                const todoData = DataOfTodos.find(t => t.title == todoTitle);
 
-                this.#setInputsValues(todoData);
                 this.#initTodoModalObjects(true, todoTitle);
+                this.#setInputsValues(todoData);
+                setTimeout(this.#resizeDescriptionInput, 100); // setTimeout is here because the modal animation makes data are load with delay, so we have to delay resizing too.
             });
         }
     }
@@ -233,7 +241,7 @@ class UserCockpitInitializator {
 
     #setInputsValues(todoData) {
         document.querySelector("#title-input").value = todoData?.title ?? "";
-        document.querySelector("#description-input").textContent = todoData?.description;
+        document.querySelector("#description-input").value = todoData?.description ?? "";
         document.querySelector("#task-start-input").value = todoData?.taskStart;
         document.querySelector("#task-end-input").value = todoData?.taskEnd;
     }
@@ -300,7 +308,10 @@ class UserCockpitInitializator {
     #addToDoInContainer(todoData) {
         const todoTitle = document.createElement("span");
         todoTitle.classList.add("todo-title");
-        todoTitle.textContent = todoData.title;
+        todoTitle.dataset.realTitle = todoData.title;
+        todoTitle.textContent = todoData.title.length < 25 // TODO: Take the value from config
+            ? todoData.title
+            : todoData.title.substring(0, 22) + "...";
         
         const todoRemoveBtn = document.createElement("input");
         todoRemoveBtn.type = "submit";
