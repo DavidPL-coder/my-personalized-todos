@@ -8,6 +8,7 @@ import Endpoints from "./initialization/EndpointPipelineContainer.js";
 import HttpsSecurityOptionsProvider from "./initialization/HttpsSecurityOptionsProvider.js";
 import AppConfigProvider from "./initialization/AppConfigProvider.js";
 import ejs from "ejs";
+import "express-async-errors";
 
 // TODO: write unit tests.
 // TODO: Some code should be execute in only development mode (for example: using self signed cert)
@@ -46,6 +47,49 @@ app.post("/add-todo", async (req, res) => await Endpoints.InvokeWithAuthorizatio
 app.post("/delete-todo/:todoTitle", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.deleteToDo));
 app.post("/edit-todo/:todoTitle", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.editToDo));
 app.post("/edit-settings", async (req, res) => await Endpoints.InvokeWithAuthorization(req, res, Endpoints.editSettings));
+
+app.use((error, req, res, next) => {
+    console.error("# The error middleware catch error.");
+    
+    // TODO: Format displaying errors.
+    console.error(error);
+    
+    // if (error.errorObjectType === "AxiosError") {
+    //     console.error("$ error request data:");
+    //     console.error("axios code:", error.code);
+    //     console.error("error message:", error.message);
+    //     console.error("protocol:", error.request.protocol);
+    //     console.error("http method:", error.config.method);
+    //     console.error("http path:", error.request.path);
+    //     console.error("host (request destination):", error.request.host);
+    //     console.error("url:", error.request._redirectable._currentUrl);
+    //     console.error("request body:", error.config.data);
+    //     console.error("request headers:", error.config.headers);
+    //     console.error("raw request headers:");
+    //     console.error(error.request._header);
+    //     console.error("$ the end of raw request headers.");
+
+    //     if (error.response) {
+    //         console.error("$ error response data:");
+    //         console.error("status code:", error.response.status);
+    //         console.error("status text:", error.response.statusText);
+    //         console.error("url:", error.response.config.url)
+    //         console.error("response message: {");
+    //         console.error(error.response.data);
+    //         console.error("}");
+    //         console.error("$ the end of response message.");
+    //         console.error("response headers:", error.response.headers);
+    //     }
+    //     else 
+    //         console.error("# error.response is nullish.");
+    // }
+    // else
+    //     console.error("Unknown error:", error);
+
+    console.error("# The error middleware displayed all required logs.")
+    res.status(500);
+    res.redirect("/error");
+});
 
 // TODO: refactor it all below
 if (process.env.MPT_APP_PROTOCOL === "https" && process.env.NODE_ENV === "Development")

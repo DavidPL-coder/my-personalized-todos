@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // TODO: Use diffrent color for error message?
-// TODO: Decrease the number of methods arguments 
+// TODO: Decrease the number of methods arguments (for example remove res)
 
 export default class RequestSender {
 
@@ -39,19 +39,18 @@ export default class RequestSender {
             return await requestFunc(config);
         }
         catch (error) {
-            if (error.response) {
-                console.log("Error was catch while request sending to backend.");
+            if (error.response && error.response.status < 500) {
+                console.log("An error was catch while request sending to backend.");
                 console.log("Server message:", error.response.data);
                 console.log("Status code:", error.response.status);
                 console.log("Data from request body:", error.response.config.data);
                 return error.response;
             }
-            else if (error.request)
-                console.log("Request error:", error.request);
-            else
-                console.log("Unknown error:", error.message);
+            else if (error.request) {
+                // error.errorObjectType = error.name;
+            }
             
-            res.redirect("/error");
+            throw error; // It will be catch in error middleware.
         }
     }
 }
